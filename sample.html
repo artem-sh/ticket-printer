@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Ticket printer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+    <h1>Ticket printer applet Demo</h1>
+
+    
+    <script src="deployJava.js"></script>
+    <script language="JavaScript">
+        var attributes = { id:'ticketApplet', code:'sh.printer.PrinterApplet.class', width:1, height:1 } ; 
+        var parameters = {jnlp_href: 'ticket-printer.jnlp'} ; 
+        deployJava.runApplet(attributes, parameters, '1.6'); 
+    </script>
+    
+    <script language="JavaScript">
+        function runAppletTest() {
+            ticketApplet.test();
+        }
+    </script>
+    
+    <a href="javascript:runAppletTest();">Test me</a>
+</body>
+</html>

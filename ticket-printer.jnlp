@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="" href="">
+    <information>
+        <title>Ticket printer</title>
+        <vendor>Artem Shiyanov</vendor>
+    </information>
+    <resources>
+        <j2se version="1.6+"
+              href="http://java.sun.com/products/autodl/j2se" />
+        <jar href="bin/ticket-printer.jar" main="true" />
+    </resources>
+    <applet-desc 
+         name="Ticket printer applet for kino-s.ru"
+         main-class="sh.printer.PrinterApplet"
+         width="1"
+         height="1">
+     </applet-desc>
+     <update check="background"/>
+</jnlp>	
