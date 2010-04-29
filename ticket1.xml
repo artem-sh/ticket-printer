@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form SYSTEM "ticket.dtd">
+<form width="280" height="420">
+  <text font="Verdana" size="20" x="50" y="80" rotation="3"><![CDATA[300 лет тому назад]]></text>
+  <text x="100" y="150" rotation="2"><![CDATA[Зал №8]]></text>
+  <image x="200" y="250"><![CDATA[   ]]></image>
+  <text x="300" y="20"><![CDATA[15:00]]></text>
+  <barcode x="60" y="70">5684135974125</barcode>
+  <text x="300" y="20"><![CDATA[Месть падших]]></text>
+</form>

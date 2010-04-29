@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT form ( barcode | image | text )* >
+<!ATTLIST form height NMTOKEN #REQUIRED >
+<!ATTLIST form width NMTOKEN #REQUIRED >
+
+<!ELEMENT barcode ( #PCDATA ) >
+<!ATTLIST barcode x NMTOKEN #REQUIRED >
+<!ATTLIST barcode y NMTOKEN #REQUIRED >
+
+<!ELEMENT image ( #PCDATA ) >
+<!ATTLIST image x NMTOKEN #REQUIRED >
+<!ATTLIST image y NMTOKEN #REQUIRED >
+
+<!ELEMENT text ( #PCDATA ) >
+<!ATTLIST text x NMTOKEN #REQUIRED >
+<!ATTLIST text y NMTOKEN #REQUIRED >
+<!ATTLIST text font NMTOKEN #IMPLIED >
+<!ATTLIST text rotation NMTOKEN #IMPLIED >
+<!ATTLIST text size NMTOKEN #IMPLIED >
