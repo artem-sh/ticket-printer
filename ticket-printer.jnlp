@@ -7,11 +7,12 @@
     <resources>
         <j2se version="1.6+"
               href="http://java.sun.com/products/autodl/j2se" />
-        <jar href="bin/ticket-printer.jar" main="true" />
+        <jar href="target/ticket-printer-1.0-SNAPSHOT.jar" main="true" />
     </resources>
     <applet-desc 
          name="Ticket printer applet for kino-s.ru"
-         main-class="sh.printer.PrinterApplet"
+         main-class="sh.app.ticket_printer.PrinterApplet"
+         archive="ticket-printer-1.0-SNAPSHOT.jar"
          width="1"
          height="1">
      </applet-desc>

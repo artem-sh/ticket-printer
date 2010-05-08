@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form width="50" height="106">
+	<text font="Verdana" size="12" x="22" y="25"><![CDATA[Дата: 12.02.2010]]></text>
+	<text font="Verdana" size="12" x="22" y="30"><![CDATA[Зал: Малый]]></text>
+	<text font="Verdana" size="12" x="22" y="35"><![CDATA[Ряд: 2]]></text>
+	<text font="Verdana" size="12" x="22" y="40"><![CDATA[Дата и время продажи: 21.12.2010 12:05]]></text>
+	<text font="Verdana" size="12" x="22" y="45"><![CDATA[№ ПУ: 123456789]]></text>
+	<text font="Verdana" size="12" x="38" y="25"><![CDATA[Время: 12:05]]></text>
+	<text font="Verdana" size="12" x="38" y="30"><![CDATA[Фильм: 300 лет тому назад]]></text>
+	<text font="Verdana" size="12" x="38" y="35"><![CDATA[Место: 5]]></text>
+	<text font="Verdana" size="12" x="55" y="25"><![CDATA[Цена: 280 р.]]></text>
+	<text font="Verdana" size="12" x="55" y="35"><![CDATA[Кассир: Иванова Г.В.]]></text>
+	<text font="Verdana" size="10" x="2" y="48" rotation="1"><![CDATA[Дата: 12.02.2010]]></text>
+	<text font="Verdana" size="10" x="6" y="48" rotation="1"><![CDATA[Зал: Малый]]></text>
+	<text font="Verdana" size="10" x="10" y="48" rotation="1"><![CDATA[Ряд: 2]]></text>
+	<text font="Verdana" size="10" x="14" y="48" rotation="1"><![CDATA[Дата и время продажи: 21.12.2010 12:05]]></text>
+	<text font="Verdana" size="10" x="18" y="48" rotation="1"><![CDATA[№ ПУ: 123456789]]></text>
+	<text font="Verdana" size="10" x="2" y="36" rotation="1"><![CDATA[Время: 12:05]]></text>
+	<text font="Verdana" size="10" x="6" y="36" rotation="1"><![CDATA[Фильм: 300 лет тому назад]]></text>
+	<text font="Verdana" size="10" x="10" y="36" rotation="1"><![CDATA[Место: 5]]></text>
+	<text font="Verdana" size="10" x="2" y="24" rotation="1"><![CDATA[Цена: 280 р.]]></text>
+	<text font="Verdana" size="10" x="10" y="24" rotation="1"><![CDATA[Кассир: Иванова Г.В.]]></text>
+</form>

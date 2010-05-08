@@ -1,6 +1,6 @@
 package sh.app.ticket_printer.ticket.model;
 
-public class Barcode extends Element {
+public class Barcode extends AbstractTicketAttribute {
     
     private String data;
 
@@ -10,5 +10,10 @@ public class Barcode extends Element {
 
     public void setData(String data) {
         this.data = data;
+    }
+    
+    @Override
+    public String toString() {
+        return "Barcode [data=" + data + ", toString()=" + super.toString() + "]";
     }
 }

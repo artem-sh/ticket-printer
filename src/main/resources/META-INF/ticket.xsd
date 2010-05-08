@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="form">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="barcode"/>
+        <xs:element ref="image"/>
+        <xs:element ref="text"/>
+      </xs:choice>
+      <xs:attributeGroup ref="attlist.form"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.form">
+    <xs:attribute name="height" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="width" use="required" type="xs:NMTOKEN"/>
+  </xs:attributeGroup>
+  <xs:element name="barcode">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="attlist.barcode"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.barcode">
+    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
+  </xs:attributeGroup>
+  <xs:element name="image">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="attlist.image"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.image">
+    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
+  </xs:attributeGroup>
+  <xs:element name="text">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="attlist.text"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.text">
+    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="font" type="xs:NMTOKEN"/>
+    <xs:attribute name="rotation" type="xs:NMTOKEN"/>
+    <xs:attribute name="size" type="xs:NMTOKEN"/>
+  </xs:attributeGroup>
+</xs:schema>

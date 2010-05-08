@@ -1,9 +1,9 @@
 package sh.app.ticket_printer.ticket.model;
 
-public class Text extends Element {
+public class Text extends AbstractTicketAttribute {
 
     private String fontName;
-    private String fontSize;
+    private Integer fontSize;
     private String data;
 
     public String getFontName() {
@@ -14,11 +14,11 @@ public class Text extends Element {
         this.fontName = fontName;
     }
 
-    public String getFontSize() {
+    public Integer getFontSize() {
         return fontSize;
     }
 
-    public void setFontSize(String fontSize) {
+    public void setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
     }
 
@@ -28,5 +28,11 @@ public class Text extends Element {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Text [data=" + data + ", fontName=" + fontName + ", fontSize=" + fontSize + ", toString()="
+                + super.toString() + "]";
     }
 }

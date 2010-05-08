@@ -2,22 +2,27 @@ package sh.app.ticket_printer.ticket.model;
 
 public class Form {
     
-    private int width;
-    private int height;
+    private Integer width;
+    private Integer height;
     
-    public int getWidth() {
+    public Integer getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(Integer width) {
         this.width = width;
     }
 
-    public int getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(Integer height) {
         this.height = height;
+    }
+    
+    @Override
+    public String toString() {
+        return "Form [height=" + height + ", width=" + width + "]";
     }
 }
