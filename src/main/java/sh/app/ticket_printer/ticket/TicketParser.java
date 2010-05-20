@@ -1,7 +1,6 @@
 package sh.app.ticket_printer.ticket;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 
 import javax.xml.XMLConstants;
@@ -18,7 +17,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
 import sh.app.ticket_printer.ticket.model.Barcode;
@@ -40,6 +38,7 @@ public class TicketParser {
     private static final QName QNAME_ROTATION = QName.valueOf("rotation");
     private static final QName QNAME_FONT_NAME = QName.valueOf("font");
     private static final QName QNAME_FONT_SIZE = QName.valueOf("size");
+    private static final QName QNAME_TEXT_STYLE = QName.valueOf("style");
 
     private static Validator validator;
 
@@ -107,6 +106,10 @@ public class TicketParser {
         if (attr != null) {
             text.setFontSize(Integer.valueOf(attr.getValue()));
         }
+        attr = element.getAttributeByName(QNAME_TEXT_STYLE);
+        if (attr != null) {
+            text.setStyle(attr.getValue());
+        }
 
         text.setData(parseText(reader));
 
@@ -153,8 +156,8 @@ public class TicketParser {
         if (event.isCharacters()) {
             Characters characters = (Characters) event;
             return characters.getData();
-        } else {
-            throw new Exception("Unexpected event!");
         }
+        
+        throw new Exception("Unexpected event!");
     }
 }

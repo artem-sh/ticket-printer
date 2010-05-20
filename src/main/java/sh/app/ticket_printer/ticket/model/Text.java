@@ -2,9 +2,10 @@ package sh.app.ticket_printer.ticket.model;
 
 public class Text extends AbstractTicketAttribute {
 
-    private String fontName;
-    private Integer fontSize;
+    private String fontName = "Verdana";
+    private Integer fontSize = Integer.valueOf(8);
     private String data;
+    private String style;
 
     public String getFontName() {
         return fontName;
@@ -30,9 +31,22 @@ public class Text extends AbstractTicketAttribute {
         this.data = data;
     }
 
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+    
+    @Override
+    public TicketPartType getType() {
+        return TicketPartType.TEXT;
+    }
+
     @Override
     public String toString() {
-        return "Text [data=" + data + ", fontName=" + fontName + ", fontSize=" + fontSize + ", toString()="
-                + super.toString() + "]";
+        return "Text [data=" + data + ", fontName=" + fontName + ", fontSize=" + fontSize + ", style=" + style
+                + ", super.toString()=" + super.toString() + "]";
     }
 }

@@ -13,8 +13,8 @@
          name="Ticket printer applet for kino-s.ru"
          main-class="sh.app.ticket_printer.PrinterApplet"
          archive="ticket-printer-1.0-SNAPSHOT.jar"
-         width="1"
-         height="1">
+         width="800"
+         height="500">
      </applet-desc>
      <update check="background"/>
 </jnlp>	

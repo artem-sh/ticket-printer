@@ -11,8 +11,8 @@
     </xs:complexType>
   </xs:element>
   <xs:attributeGroup name="attlist.form">
-    <xs:attribute name="height" use="required" type="xs:NMTOKEN"/>
-    <xs:attribute name="width" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="height" use="required"/>
+    <xs:attribute name="width" use="required"/>
   </xs:attributeGroup>
   <xs:element name="barcode">
     <xs:complexType mixed="true">
@@ -20,8 +20,9 @@
     </xs:complexType>
   </xs:element>
   <xs:attributeGroup name="attlist.barcode">
-    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
-    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="x" use="required"/>
+    <xs:attribute name="y" use="required"/>
+    <xs:attribute name="rotation"/>
   </xs:attributeGroup>
   <xs:element name="image">
     <xs:complexType mixed="true">
@@ -29,8 +30,9 @@
     </xs:complexType>
   </xs:element>
   <xs:attributeGroup name="attlist.image">
-    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
-    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
+    <xs:attribute name="x" use="required"/>
+    <xs:attribute name="y" use="required"/>
+    <xs:attribute name="rotation"/>
   </xs:attributeGroup>
   <xs:element name="text">
     <xs:complexType mixed="true">
@@ -38,10 +40,11 @@
     </xs:complexType>
   </xs:element>
   <xs:attributeGroup name="attlist.text">
-    <xs:attribute name="x" use="required" type="xs:NMTOKEN"/>
-    <xs:attribute name="y" use="required" type="xs:NMTOKEN"/>
-    <xs:attribute name="font" type="xs:NMTOKEN"/>
-    <xs:attribute name="rotation" type="xs:NMTOKEN"/>
-    <xs:attribute name="size" type="xs:NMTOKEN"/>
+    <xs:attribute name="x" use="required"/>
+    <xs:attribute name="y" use="required"/>
+    <xs:attribute name="font"/>
+    <xs:attribute name="rotation"/>
+    <xs:attribute name="size"/>
+    <xs:attribute name="style"/>
   </xs:attributeGroup>
 </xs:schema>

@@ -13,7 +13,12 @@ public class Barcode extends AbstractTicketAttribute {
     }
     
     @Override
+    public TicketPartType getType() {
+        return TicketPartType.BARCODE;
+    }
+    
+    @Override
     public String toString() {
-        return "Barcode [data=" + data + ", toString()=" + super.toString() + "]";
+        return "Barcode [data=" + data + ", super.toString()=" + super.toString() + "]";
     }
 }

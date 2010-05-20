@@ -1,6 +1,6 @@
 package sh.app.ticket_printer.ticket.model;
 
-public class Form {
+public class Form implements TicketPart {
     
     private Integer width;
     private Integer height;
@@ -19,6 +19,11 @@ public class Form {
 
     public void setHeight(Integer height) {
         this.height = height;
+    }
+    
+    @Override
+    public TicketPartType getType() {
+        return TicketPartType.FORM;
     }
     
     @Override

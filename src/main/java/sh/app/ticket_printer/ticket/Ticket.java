@@ -36,5 +36,4 @@ public class Ticket implements Printable {
     public String toString() {
         return "Ticket [form=" + form + ", elemets=" + elemets + "]";
     }
-
 }

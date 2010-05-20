@@ -14,7 +14,12 @@ public class Image extends AbstractTicketAttribute {
     }
     
     @Override
+    public TicketPartType getType() {
+        return TicketPartType.IMAGE;
+    }
+    
+    @Override
     public String toString() {
-        return "Image [data=" + ((data != null) ? "not null" : "null") + ", toString()=" + super.toString() + "]";
+        return "Image [data=" + ((data != null) ? "not null" : "null") + ", super.toString()=" + super.toString() + "]";
     }
 }

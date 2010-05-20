@@ -1,10 +1,10 @@
 package sh.app.ticket_printer.ticket.model;
 
-public abstract class AbstractTicketAttribute {
+public abstract class AbstractTicketAttribute implements TicketPart {
     
     private Integer posX;
     private Integer posY;
-    private Integer rotation;
+    private Integer rotation = Integer.valueOf(0);
 
     public Integer getPosX() {
         return posX;
