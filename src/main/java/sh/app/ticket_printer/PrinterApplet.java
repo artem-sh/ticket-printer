@@ -46,6 +46,10 @@ public class PrinterApplet extends Applet {
         if (getParameter(DEBUG_APPLET_PARAM) != null) {
             logEnabled = true;
         }
+        
+        if (isLogEnabled()) {
+            System.out.println("Entering PrinterApplet.init()");
+        }
 
         if (!PrinterManager.checkDefaultPrinterAvailable()) {
             if (isLogEnabled()) {
@@ -62,6 +66,8 @@ public class PrinterApplet extends Applet {
         // Initialize drawing colors
         setBackground(bg);
         setForeground(fg);
+        
+        print();
     }
 
     // FontMetrics pickFont(Graphics2D g2, String longString, int xSpace) {
@@ -238,9 +244,6 @@ public class PrinterApplet extends Applet {
     }
 
     public void print() {
-        JOptionPane.showMessageDialog(null, MAIN_ERROR_MSG
-                + ". В системе не обнаружены установленные принтеры", "Error", JOptionPane.ERROR_MESSAGE);
-        
         if (isLogEnabled()) {
             System.out.println("Entering PrintApplet.print()");
         }
@@ -252,6 +255,7 @@ public class PrinterApplet extends Applet {
 
             JOptionPane.showMessageDialog(null, MAIN_ERROR_MSG
                     + ". Не найдены установленные принтеры", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         InputStream is = null;
