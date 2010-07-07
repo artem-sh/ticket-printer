@@ -1,5 +1,7 @@
 package sh.app.ticket_printer.ticket;
 
+import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
+
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -43,7 +45,9 @@ public class TicketParser {
     private static Validator validator;
 
     public static Ticket parse(String xml) throws Exception {
-        System.out.println("DEBUG: TicketParser.start(): parsing xml: " + xml);
+        if (isLogEnabled()) {
+            System.out.println("DEBUG: TicketParser.start(): parsing xml: " + xml);
+        }
         validate(xml);
 
         Ticket ticket = new Ticket();
@@ -67,7 +71,9 @@ public class TicketParser {
             }
         }
 
-        System.out.println(ticket);
+        if (isLogEnabled()) {
+            System.out.println(ticket);
+        }
 
         return ticket;
     }

@@ -1,4 +1,4 @@
-package sh.app.ticket_printer;
+package sh.app.ticket_printer.ticket;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,16 +12,13 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 
-import sh.app.ticket_printer.ticket.Ticket;
-import sh.app.ticket_printer.ticket.TicketRender;
 
-public class PrinterManager implements Printable {
+public class TicketPrinter implements Printable {
 	
 	private static Boolean isAnyPrinterAvailable;
-    
     private Ticket currentTicket;
     
-    private PrinterManager(Ticket currentTicket) {
+    private TicketPrinter(Ticket currentTicket) {
         this.currentTicket = currentTicket;
     }
     
@@ -72,15 +69,24 @@ public class PrinterManager implements Printable {
 
     public static void printTicket(Ticket ticket) throws PrinterException {
         PrinterJob printJob = PrinterJob.getPrinterJob();
-        printJob.setPrintable(new PrinterManager(ticket));
+        printJob.setPrintable(new TicketPrinter(ticket));
         printJob.print();
     }
     
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
-        TicketRender.render(currentTicket, (Graphics2D) graphics);
+        if (pageIndex > 0) { /* We have only one page, and 'page' is zero-based */
+            return NO_SUCH_PAGE;
+        }
+        
+        /* User (0,0) is typically outside the imageable area, so we must
+         * translate by the X and Y values in the PageFormat to avoid clipping
+         */
+        Graphics2D g2d = (Graphics2D)graphics;
+        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+        
+        TicketRender.render(currentTicket, g2d);
         
         return Printable.PAGE_EXISTS;
     }
-    
 }
