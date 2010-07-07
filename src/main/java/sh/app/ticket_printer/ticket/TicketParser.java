@@ -4,6 +4,7 @@ import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -32,6 +33,9 @@ public class TicketParser {
 
     private static final String TICKET_XML_ENCODING = "UTF-8";
     private static final String TICKET_XSD_FILE_NAME = "/META-INF/ticket.xsd";
+    private static final String TEXT_STYLE_BOLD = "B";
+    private static final String TEXT_STYLE_ITALIC = "I";
+    private static final String TEXT_STYLE_UNDERLINE = "U";
     private static final QName QNAME_FORM = QName.valueOf("form");
     private static final QName QNAME_TEXT = QName.valueOf("text");
     private static final QName QNAME_IMAGE = QName.valueOf("image");
@@ -137,12 +141,32 @@ public class TicketParser {
         }
         attr = element.getAttributeByName(QNAME_TEXT_STYLE);
         if (attr != null) {
-            text.setStyle(attr.getValue());
+            processTextStyle(text, attr.getValue());
         }
 
         text.setData(parseText(reader));
 
         targetTicket.getElemets().add(text);
+    }
+    
+    private static void processTextStyle(Text text, String style) throws CustomTicketParserException {
+        if ((style == null) || style.isEmpty()) {
+            return;
+        }
+        if (style.length() > 3) {
+            throw new CustomTicketParserException("Incorrect value for text 'style' attribute of 'text' element");
+        }
+        
+        style = style.toUpperCase(Locale.ENGLISH);
+        if (style.contains(TEXT_STYLE_BOLD)) {
+            text.setBold(true);
+        }
+        if (style.contains(TEXT_STYLE_ITALIC)) {
+            text.setItalic(true);
+        }
+        if (style.contains(TEXT_STYLE_UNDERLINE)) {
+            text.setUnderline(true);
+        }
     }
 
     private static void processImageElement(XMLEventReader reader, StartElement element, Ticket targetTicket)

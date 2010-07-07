@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 
-import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
@@ -54,7 +53,15 @@ public class TicketRender {
     }
 
     private static void renderText(Text text, Graphics2D g) {
-        Font font = new Font(text.getFontName(), Font.PLAIN, text.getFontSize());
+        int textStyle = Font.PLAIN;
+        if (text.isBold()) {
+            textStyle |= Font.BOLD;
+        }
+        if (text.isItalic()) {
+            textStyle |= Font.ITALIC;
+        }
+        
+        Font font = new Font(text.getFontName(), textStyle, text.getFontSize());
         g.setFont(font);
         g.drawString(text.getData(), text.getPosX() * transformToPxs, text.getPosY() * transformToPxs
                 + text.getFontSize());

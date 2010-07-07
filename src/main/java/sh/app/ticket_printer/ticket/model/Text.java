@@ -5,7 +5,14 @@ public class Text extends AbstractTicketAttribute {
     private String fontName = "Verdana";
     private Integer fontSize = Integer.valueOf(8);
     private String data;
-    private String style;
+    private boolean bold;
+    private boolean italic;
+    private boolean underline;
+
+    @Override
+    public TicketPartType getType() {
+        return TicketPartType.TEXT;
+    }
 
     public String getFontName() {
         return fontName;
@@ -31,22 +38,34 @@ public class Text extends AbstractTicketAttribute {
         this.data = data;
     }
 
-    public void setStyle(String style) {
-        this.style = style;
+    public boolean isBold() {
+        return bold;
     }
 
-    public String getStyle() {
-        return style;
+    public void setBold(boolean bold) {
+        this.bold = bold;
     }
-    
-    @Override
-    public TicketPartType getType() {
-        return TicketPartType.TEXT;
+
+    public boolean isItalic() {
+        return italic;
+    }
+
+    public void setItalic(boolean italic) {
+        this.italic = italic;
+    }
+
+    public boolean isUnderline() {
+        return underline;
+    }
+
+    public void setUnderline(boolean underline) {
+        this.underline = underline;
     }
 
     @Override
     public String toString() {
-        return "Text [data=" + data + ", fontName=" + fontName + ", fontSize=" + fontSize + ", style=" + style
-                + ", super.toString()=" + super.toString() + "]";
+        return "Text [fontName=" + fontName + ", fontSize=" + fontSize + ", data=" + data + ", bold=" + bold
+                + ", italic=" + italic + ", underline=" + underline + ", super.toString()="
+                + super.toString() + "]";
     }
 }
