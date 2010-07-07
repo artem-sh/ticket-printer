@@ -2,13 +2,14 @@ package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
@@ -18,8 +19,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.xml.sax.SAXException;
-
+import sh.app.ticket_printer.exception.CustomTicketParserException;
+import sh.app.ticket_printer.exception.IncorrectTicketFormatException;
+import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
@@ -28,6 +30,7 @@ import sh.app.ticket_printer.ticket.model.Text;
 
 public class TicketParser {
 
+    private static final String TICKET_XML_ENCODING = "UTF-8";
     private static final String TICKET_XSD_FILE_NAME = "/META-INF/ticket.xsd";
     private static final QName QNAME_FORM = QName.valueOf("form");
     private static final QName QNAME_TEXT = QName.valueOf("text");
@@ -44,31 +47,47 @@ public class TicketParser {
 
     private static Validator validator;
 
-    public static Ticket parse(String xml) throws Exception {
+    public static Ticket parse(String xml) throws IncorrectTicketFormatException, TicketParserException {
         if (isLogEnabled()) {
-            System.out.println("DEBUG: TicketParser.start(): parsing xml: " + xml);
+            System.out.println("DEBUG: TicketParser.start(): got xml to parse: " + xml);
         }
-        validate(xml);
+
+        byte[] xmlBytes;
+        try {
+            xmlBytes = xml.getBytes(TICKET_XML_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new CustomTicketParserException("Problem with encoding");
+        }
+        
+        validate(xmlBytes);
 
         Ticket ticket = new Ticket();
 
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLEventReader reader = factory.createXMLEventReader(new StringReader(xml));
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            // XMLEventReader reader = factory.createXMLEventReader(new StringReader(xml));
+            XMLEventReader reader;
+            reader = factory.createXMLEventReader(new ByteArrayInputStream(xmlBytes));
 
-        while (reader.hasNext()) {
-            XMLEvent event = reader.nextEvent();
-            if (event.isStartElement()) {
-                StartElement element = (StartElement) event;
-                if (QNAME_FORM.equals(element.getName())) {
-                    processFormElement(element, ticket);
-                } else if (QNAME_TEXT.equals(element.getName())) {
-                    processTextElement(reader, element, ticket);
-                } else if (QNAME_IMAGE.equals(element.getName())) {
-                    processImageElement(reader, element, ticket);
-                } else if (QNAME_BARCODE.equals(element.getName())) {
-                    processBarcodeElement(reader, element, ticket);
+            while (reader.hasNext()) {
+                XMLEvent event = reader.nextEvent();
+                if (event.isStartElement()) {
+                    StartElement element = (StartElement) event;
+                    if (QNAME_FORM.equals(element.getName())) {
+                        processFormElement(element, ticket);
+                    } else if (QNAME_TEXT.equals(element.getName())) {
+                        processTextElement(reader, element, ticket);
+                    } else if (QNAME_IMAGE.equals(element.getName())) {
+                        processImageElement(reader, element, ticket);
+                    } else if (QNAME_BARCODE.equals(element.getName())) {
+                        processBarcodeElement(reader, element, ticket);
+                    }
                 }
             }
+        } catch (XMLStreamException e) {
+            throw new TicketParserException(e);
+        } catch (CustomTicketParserException e) {
+            throw new TicketParserException(e);
         }
 
         if (isLogEnabled()) {
@@ -78,15 +97,19 @@ public class TicketParser {
         return ticket;
     }
 
-    private static synchronized void validate(String xml) throws SAXException, IOException {
-        if (validator == null) {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(new StreamSource(TicketParser.class
-                    .getResourceAsStream(TICKET_XSD_FILE_NAME)));
-            validator = schema.newValidator();
-        }
+    private static synchronized void validate(byte[] xmlBytes) throws IncorrectTicketFormatException {
+        try {
+            if (validator == null) {
+                SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                Schema schema = schemaFactory.newSchema(new StreamSource(TicketParser.class
+                        .getResourceAsStream(TICKET_XSD_FILE_NAME)));
+                validator = schema.newValidator();
+            }
 
-        validator.validate(new StreamSource(new StringReader(xml)));
+            validator.validate(new StreamSource(new ByteArrayInputStream(xmlBytes)));
+        } catch (Exception e) {
+            throw new IncorrectTicketFormatException("Некорректный формат описания билета", e);
+        }
     }
 
     private static void processFormElement(StartElement element, Ticket targetTicket) {
@@ -98,7 +121,7 @@ public class TicketParser {
     }
 
     private static void processTextElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
-            throws Exception {
+            throws CustomTicketParserException, XMLStreamException {
         Text text = new Text();
 
         processAbstractTicketAttr(text, element);
@@ -123,7 +146,7 @@ public class TicketParser {
     }
 
     private static void processImageElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
-            throws Exception {
+            throws CustomTicketParserException, XMLStreamException {
         Image image = new Image();
 
         processAbstractTicketAttr(image, element);
@@ -134,7 +157,7 @@ public class TicketParser {
     }
 
     private static void processBarcodeElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
-            throws Exception {
+            throws CustomTicketParserException, XMLStreamException {
         Barcode barcode = new Barcode();
 
         processAbstractTicketAttr(barcode, element);
@@ -153,9 +176,10 @@ public class TicketParser {
         }
     }
 
-    private static String parseText(XMLEventReader reader) throws Exception {
+    private static String parseText(XMLEventReader reader) throws CustomTicketParserException,
+            XMLStreamException {
         if (!reader.hasNext()) {
-            throw new Exception("No data event!");
+            throw new CustomTicketParserException("No data event!");
         }
 
         XMLEvent event = reader.nextEvent();
@@ -163,7 +187,7 @@ public class TicketParser {
             Characters characters = (Characters) event;
             return characters.getData();
         }
-        
-        throw new Exception("Unexpected event!");
+
+        throw new CustomTicketParserException("Unexpected event!");
     }
 }

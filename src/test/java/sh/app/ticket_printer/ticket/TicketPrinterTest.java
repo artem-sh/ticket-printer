@@ -13,36 +13,36 @@ import sh.app.ticket_printer.ticket.TicketParser;
 public class TicketPrinterTest {
 
     public static void main(String[] args) {
-        InputStream is = null;
-        try {
-            String xmlFileName = "/META-INF/ticket1.xml";
-            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line = null;
-            StringBuilder sb = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            Ticket ticket = TicketParser.parse(sb.toString());
-            TicketPrinter.printTicket(ticket);
-        } catch (Exception x) {
-            System.err.println(x);
-            x.printStackTrace();
-
-            if (x.getCause() != null) {
-                System.err.println("Cause is: " + x.getCause());
-                x.getCause().printStackTrace();
-            }
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        new PrinterApplet().print();
+//        InputStream is = null;
+//        try {
+//            String xmlFileName = "/META-INF/new1.xml";
+//            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+//            String line = null;
+//            StringBuilder sb = new StringBuilder();
+//            while ((line = reader.readLine()) != null) {
+//                sb.append(line);
+//            }
+//
+//            Ticket ticket = TicketParser.parse(sb.toString());
+//            TicketPrinter.printTicket(ticket);
+//        } catch (Exception x) {
+//            x.printStackTrace();
+//
+//            if (x.getCause() != null) {
+//                System.err.println("Cause is: " + x.getCause());
+//                x.getCause().printStackTrace();
+//            }
+//        } finally {
+//            if (is != null) {
+//                try {
+//                    is.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
 }

@@ -1,10 +1,13 @@
 package sh.app.ticket_printer.ticket;
 
+import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 
+import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
@@ -44,8 +47,10 @@ public class TicketRender {
     }
 
     private static void renderForm(Form form, Graphics2D g) {
-        g.draw(new Rectangle2D.Double(0, 0, form.getHeight() * transformToPxs, form.getWidth()
-                * transformToPxs));
+        if (isLogEnabled()) {
+            g.draw(new Rectangle2D.Double(0, 0, form.getHeight() * transformToPxs, form.getWidth()
+                    * transformToPxs));
+        }
     }
 
     private static void renderText(Text text, Graphics2D g) {

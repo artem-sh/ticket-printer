@@ -89,9 +89,9 @@ public class PrinterApplet extends Applet {
 
         InputStream is = null;
         try {
-            String xmlFileName = "/META-INF/ticket1.xml";
+            String xmlFileName = "/META-INF/new1.xml";
             is = PrinterApplet.class.getResourceAsStream(xmlFileName);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line = null;
             StringBuilder sb = new StringBuilder();
             while ((line = reader.readLine()) != null) {
@@ -99,11 +99,8 @@ public class PrinterApplet extends Applet {
             }
 
             Ticket ticket = TicketParser.parse(sb.toString());
-            // TODO add if debug
-            // TicketRender.render(ticket, (Graphics2D) g);
             TicketPrinter.printTicket(ticket);
         } catch (Exception x) {
-            System.err.println(x);
             x.printStackTrace();
 
             if (x.getCause() != null) {
@@ -119,5 +116,18 @@ public class PrinterApplet extends Applet {
                 }
             }
         }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // TODO: remove in production    
+    public static void setLogEnabled() {
+        logEnabled = true;
+    }
+    
+    // TODO: remove in production
+    public static void main(String[] args) {
+        setLogEnabled();
+        new PrinterApplet().print();
     }
 }
