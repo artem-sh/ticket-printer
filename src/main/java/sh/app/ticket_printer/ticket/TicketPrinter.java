@@ -73,9 +73,12 @@ public class TicketPrinter implements Printable {
         printJob.print();
     }
     
+    /* WARN: method is called twice (see javadoc or
+    http://docstore.mik.ua/orelly/java-ent/jfc/ch05_02.htm
+    for details) */
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
-        if (pageIndex > 0) { /* We have only one page, and 'page' is zero-based */
+        if (pageIndex != 0) { /* We have only one page, and 'page' is zero-based */
             return NO_SUCH_PAGE;
         }
         

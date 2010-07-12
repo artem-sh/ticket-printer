@@ -2,8 +2,11 @@ package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
 
+import java.awt.GraphicsEnvironment;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.xml.XMLConstants;
@@ -48,8 +51,16 @@ public class TicketParser {
     private static final QName QNAME_FONT_NAME = QName.valueOf("font");
     private static final QName QNAME_FONT_SIZE = QName.valueOf("size");
     private static final QName QNAME_TEXT_STYLE = QName.valueOf("style");
-
+    
+    private static final List<String> fontFamilies;
     private static Validator validator;
+    
+    static {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        fontFamilies = Arrays.asList(ge.getAvailableFontFamilyNames());
+        // TODO: продолжить!
+    }
+
 
     public static Ticket parse(String xml) throws IncorrectTicketFormatException, TicketParserException {
         if (isLogEnabled()) {
