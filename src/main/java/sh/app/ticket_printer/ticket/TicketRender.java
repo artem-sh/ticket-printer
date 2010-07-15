@@ -1,10 +1,12 @@
 package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
+import static sh.app.ticket_printer.ticket.model.AbstractTicketAttribute.DEFAULT_ROTATION_VALUE;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -65,11 +67,15 @@ public class TicketRender {
 		}
 
 		Font font = new Font(text.getFontName(), textStyle, text.getFontSize());
-
+		
 		if (text.isUnderline()) {
 			Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>();
 			attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 			font = font.deriveFont(attributes);
+		}
+		
+		if (!DEFAULT_ROTATION_VALUE.equals(text.getRotation())) {
+			font = font.deriveFont(AffineTransform.getRotateInstance(-Math.toRadians(90 * text.getRotation().intValue())));
 		}
 
 		g.setFont(font);
