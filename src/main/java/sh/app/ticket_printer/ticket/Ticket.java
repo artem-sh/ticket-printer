@@ -6,13 +6,13 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.LinkedList;
 
-import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
+import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Form;
 
 public class Ticket implements Printable {
 
     private Form form;
-    private final LinkedList<AbstractTicketAttribute> elemets = new LinkedList<AbstractTicketAttribute>();
+    private final LinkedList<AbstractTicketElement> elemets = new LinkedList<AbstractTicketElement>();
 
     public Form getForm() {
         return form;
@@ -22,7 +22,7 @@ public class Ticket implements Printable {
         this.form = form;
     }
 
-    public LinkedList<AbstractTicketAttribute> getElemets() {
+    public LinkedList<AbstractTicketElement> getElemets() {
         return elemets;
     }
 

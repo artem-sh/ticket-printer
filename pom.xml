@@ -11,6 +11,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

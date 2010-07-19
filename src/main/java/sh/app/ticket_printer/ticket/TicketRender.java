@@ -1,18 +1,24 @@
 package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
-import static sh.app.ticket_printer.ticket.model.AbstractTicketAttribute.DEFAULT_ROTATION_VALUE;
+import static sh.app.ticket_printer.ticket.model.AbstractTicketElement.DEFAULT_ROTATION_VALUE;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
-import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
+import javax.imageio.ImageIO;
+
+import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
 import sh.app.ticket_printer.ticket.model.Image;
@@ -26,7 +32,7 @@ public class TicketRender {
 	public static void render(Ticket ticket, Graphics2D g) {
 		renderTicketPart(ticket.getForm(), g);
 
-		for (AbstractTicketAttribute attr : ticket.getElemets()) {
+		for (AbstractTicketElement attr : ticket.getElemets()) {
 			renderTicketPart(attr, g);
 		}
 	}
@@ -57,35 +63,59 @@ public class TicketRender {
 		}
 	}
 
-	private static void renderText(Text text, Graphics2D g) {
-		int textStyle = Font.PLAIN;
-		if (text.isBold()) {
-			textStyle |= Font.BOLD;
-		}
-		if (text.isItalic()) {
-			textStyle |= Font.ITALIC;
-		}
+    private static void renderText(Text text, Graphics2D g) {
+        int textStyle = Font.PLAIN;
+        if (text.isBold()) {
+            textStyle |= Font.BOLD;
+        }
+        if (text.isItalic()) {
+            textStyle |= Font.ITALIC;
+        }
 
-		Font font = new Font(text.getFontName(), textStyle, text.getFontSize());
-		
-		if (text.isUnderline()) {
-			Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>();
-			attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-			font = font.deriveFont(attributes);
-		}
-		
-		if (!DEFAULT_ROTATION_VALUE.equals(text.getRotation())) {
-			font = font.deriveFont(AffineTransform.getRotateInstance(-Math.toRadians(90 * text.getRotation().intValue())));
-		}
+        Font font = new Font(text.getFontName(), textStyle, text.getFontSize());
 
-		g.setFont(font);
-		g.drawString(text.getData(), text.getPosX() * transformToPxs,
-				text.getPosY() * transformToPxs + text.getFontSize());
-	}
+        if (text.isUnderline()) {
+            Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>();
+            attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            font = font.deriveFont(attributes);
+        }
+
+        AffineTransform transform = buildTransform(text);
+        if (transform != null) {
+            font = font.deriveFont(transform);
+        }
+
+        g.setFont(font);
+        g.drawString(text.getData(), text.getPosX() * transformToPxs,
+                text.getPosY() * transformToPxs + text.getFontSize());
+    }
 
 	private static void renderBarcode(Barcode barcode, Graphics2D g) {
 	}
 
 	private static void renderImage(Image image, Graphics2D g) {
+	    try {
+	        BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getData()));
+	        double x = image.getPosX().intValue() * transformToPxs;
+	        double y = image.getPosY().intValue() * transformToPxs;
+	        double angle = -Math.toRadians(90 * image.getRotation().intValue());
+	        
+	        AffineTransform transform = new AffineTransform();
+	        transform.setToTranslation(x, y);
+	        transform.rotate(angle);
+	        g.drawImage(bufferedImage, transform, null);
+	    } catch (IOException e) {
+	        if (isLogEnabled()) {
+	            System.err.println("WARNING: Caught exception while rendering Image: " + e);
+	        }
+        }
 	}
+	
+    private static AffineTransform buildTransform(AbstractTicketElement element) {
+        if (DEFAULT_ROTATION_VALUE.equals(element.getRotation())) {
+            return null;
+        }
+
+        return AffineTransform.getRotateInstance(-Math.toRadians(90 * element.getRotation().intValue()));
+    }
 }

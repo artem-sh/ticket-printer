@@ -3,5 +3,6 @@
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>

@@ -25,11 +25,13 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.commons.codec.binary.Base64;
+
 import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.exception.CustomTicketParserException;
 import sh.app.ticket_printer.exception.IncorrectTicketFormatException;
 import sh.app.ticket_printer.exception.TicketParserException;
-import sh.app.ticket_printer.ticket.model.AbstractTicketAttribute;
+import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
 import sh.app.ticket_printer.ticket.model.Image;
@@ -198,17 +200,27 @@ public class TicketParser {
 		}
 	}
 
-	private static void processImageElement(XMLEventReader reader,
-			StartElement element, Ticket targetTicket)
-			throws CustomTicketParserException, XMLStreamException {
-		Image image = new Image();
+    private static void processImageElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
+            throws CustomTicketParserException, XMLStreamException {
+        Image image = new Image();
 
-		processAbstractTicketAttr(image, element);
+        processAbstractTicketAttr(image, element);
 
-		image.setData(parseText(reader).getBytes());
+        byte[] encodedImg = null;
+        try {
+            encodedImg = parseText(reader).getBytes(TICKET_XML_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new CustomTicketParserException("Problem with encoding");
+        }
+         
+        if (!Base64.isArrayByteBase64(encodedImg)) {
+            throw new CustomTicketParserException("Value for the 'image' element is not in Base64 format");
+        }
 
-		targetTicket.getElemets().add(image);
-	}
+        image.setData(Base64.decodeBase64(encodedImg));
+
+        targetTicket.getElemets().add(image);
+    }
 
 	private static void processBarcodeElement(XMLEventReader reader,
 			StartElement element, Ticket targetTicket)
@@ -223,7 +235,7 @@ public class TicketParser {
 	}
 
 	private static void processAbstractTicketAttr(
-			AbstractTicketAttribute ticketAttr, StartElement element) throws CustomTicketParserException {
+			AbstractTicketElement ticketAttr, StartElement element) throws CustomTicketParserException {
 		ticketAttr.setPosX(Integer.valueOf(element.getAttributeByName(
 				QNAME_POSX).getValue()));
 		ticketAttr.setPosY(Integer.valueOf(element.getAttributeByName(

@@ -1,6 +1,6 @@
 package sh.app.ticket_printer.ticket.model;
 
-public class Text extends AbstractTicketAttribute {
+public class Text extends AbstractTicketElement {
 
     private String fontName = "Verdana";
     private Integer fontSize = Integer.valueOf(8);

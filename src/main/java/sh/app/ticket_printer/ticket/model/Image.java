@@ -1,7 +1,7 @@
 package sh.app.ticket_printer.ticket.model;
 
 
-public class Image extends AbstractTicketAttribute {
+public class Image extends AbstractTicketElement {
     
     private byte[] data;
 

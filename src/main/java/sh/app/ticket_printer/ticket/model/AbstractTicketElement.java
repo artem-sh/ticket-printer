@@ -1,6 +1,6 @@
 package sh.app.ticket_printer.ticket.model;
 
-public abstract class AbstractTicketAttribute implements TicketPart {
+public abstract class AbstractTicketElement implements TicketPart {
     
 	public static final Integer DEFAULT_ROTATION_VALUE = Integer.valueOf(0);
     private Integer posX;

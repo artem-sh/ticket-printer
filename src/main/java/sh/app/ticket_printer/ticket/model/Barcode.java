@@ -1,6 +1,6 @@
 package sh.app.ticket_printer.ticket.model;
 
-public class Barcode extends AbstractTicketAttribute {
+public class Barcode extends AbstractTicketElement {
     
     private String data;
 

@@ -89,7 +89,7 @@ public class PrinterApplet extends Applet {
 
         InputStream is = null;
         try {
-            String xmlFileName = "/META-INF/ticket_test.xml";
+            String xmlFileName = "/META-INF/ticket1.xml";
             is = PrinterApplet.class.getResourceAsStream(xmlFileName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String line = null;
@@ -104,7 +104,7 @@ public class PrinterApplet extends Applet {
             x.printStackTrace();
 
             if (x.getCause() != null) {
-                System.err.println("Cause is: " + x.getCause());
+                System.err.println("Cause is: ");
                 x.getCause().printStackTrace();
             }
         } finally {
