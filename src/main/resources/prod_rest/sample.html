@@ -16,8 +16,11 @@
     <script language="JavaScript">
         function runAppletTest() {
 			var ticketString = CHANGE_ME;
-			var ticketString = "<?xml version=";
-            ticketApplet.printTicket(ticketString);
+			try {
+				ticketApplet.printTicket(ticketString);
+			} catch (e) {
+				alert(e);
+			}
         }
     </script>
     
