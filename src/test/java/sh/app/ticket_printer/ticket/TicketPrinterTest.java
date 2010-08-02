@@ -13,7 +13,7 @@ import sh.app.ticket_printer.ticket.TicketParser;
 public class TicketPrinterTest {
 
     public static void main(String[] args) {
-        new PrinterApplet().print();
+        new PrinterApplet().print(null);
 //        InputStream is = null;
 //        try {
 //            String xmlFileName = "/META-INF/new1.xml";

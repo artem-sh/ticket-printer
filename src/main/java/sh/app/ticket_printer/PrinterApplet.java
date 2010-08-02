@@ -2,11 +2,7 @@ package sh.app.ticket_printer;
 
 import java.applet.Applet;
 import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +10,9 @@ import java.io.InputStreamReader;
 
 import javax.swing.JOptionPane;
 
-import sh.app.ticket_printer.ticket.TicketPrinter;
 import sh.app.ticket_printer.ticket.Ticket;
 import sh.app.ticket_printer.ticket.TicketParser;
+import sh.app.ticket_printer.ticket.TicketPrinter;
 
 public class PrinterApplet extends Applet {
 
@@ -58,10 +54,6 @@ public class PrinterApplet extends Applet {
                 }
             }
         }
-        
-        // TODO: only for running in applet viewer
-        // REMOVE in production!!!
-        print();
     }
 
     @Override
@@ -72,48 +64,50 @@ public class PrinterApplet extends Applet {
     public void paint(Graphics g) {
     }
 
-    public void print() {
+    public void printTicket(String ticketString) {
         if (isLogEnabled()) {
-            System.out.println("Entering PrintApplet.print()");
-        }
-
-        if (!TicketPrinter.checkPrintersAvailable()) {
-            if (isLogEnabled()) {
-                System.err.println("WARNING: no printer found");
-            }
-
-            JOptionPane.showMessageDialog(null, MAIN_ERROR_MSG
-                    + ". Не найдены установленные принтеры", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            System.out.println("Entering PrintApplet.printTicket()");
         }
 
         InputStream is = null;
         try {
-            String xmlFileName = "/META-INF/ticket1.xml";
-            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            String line = null;
-            StringBuilder sb = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
+        	if (!TicketPrinter.checkPrintersAvailable()) {
+        		if (isLogEnabled()) {
+        			System.err.println("WARNING: no printer found");
+        		}
+        		
+        		JOptionPane.showMessageDialog(null, MAIN_ERROR_MSG
+        				+ ". Не найдены установленные принтеры", "Error", JOptionPane.ERROR_MESSAGE);
+        		return;
+        	}
+        	
+        	// TODO: remove later!
+        	if (ticketString == null) {
+	            String xmlFileName = "/ticket1.xml";
+	            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+	            String line = null;
+	            StringBuilder sb = new StringBuilder();
+	            while ((line = reader.readLine()) != null) {
+	                sb.append(line);
+	            }
+	            ticketString = sb.toString();
+        	}
 
-            Ticket ticket = TicketParser.parse(sb.toString());
+            Ticket ticket = TicketParser.parse(ticketString);
             TicketPrinter.printTicket(ticket);
-        } catch (Exception x) {
-            x.printStackTrace();
+        } catch (Throwable t) {
+            t.printStackTrace();
 
-            if (x.getCause() != null) {
+            if (t.getCause() != null) {
                 System.err.println("Cause is: ");
-                x.getCause().printStackTrace();
+                t.getCause().printStackTrace();
             }
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (IOException ignored) {}
             }
         }
     }
@@ -128,6 +122,6 @@ public class PrinterApplet extends Applet {
     // TODO: remove in production
     public static void main(String[] args) {
         setLogEnabled();
-        new PrinterApplet().print();
+        new PrinterApplet().printTicket(null);
     }
 }

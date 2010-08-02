@@ -5,14 +5,14 @@
         <vendor>Artem Shiyanov</vendor>
     </information>
     <resources>
-        <j2se version="1.6+"
-              href="http://java.sun.com/products/autodl/j2se" />
-        <jar href="target/ticket-printer-1.0-SNAPSHOT.jar" main="true" />
+        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
+        <jar href="ticket-printer-1.0-SNAPSHOT.jar" main="true" />
+        <jar href="commons-codec-1.4.jar" />
     </resources>
     <applet-desc 
          name="Ticket printer applet for kino-s.ru"
          main-class="sh.app.ticket_printer.PrinterApplet"
-         archive="ticket-printer-1.0-SNAPSHOT.jar"
+         archive="ticket-printer-1.0-SNAPSHOT.jar,commons-codec-1.4.jar"
          width="1"
          height="1">
          

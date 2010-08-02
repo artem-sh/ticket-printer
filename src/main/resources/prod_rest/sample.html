@@ -6,20 +6,21 @@
   <body>
     <h1>Ticket printer applet Demo</h1>
 
-    
     <script src="deployJava.js"></script>
     <script language="JavaScript">
-        var attributes = { id:'ticketApplet', code:'sh.app.ticket_printer.PrinterApplet.class', archive:'ticket-printer-1.0-SNAPSHOT.jar', width:800, height:500 } ; 
-        var parameters = {jnlp_href: 'ticket-printer2screen.jnlp'};
+        var attributes = { id:'ticketApplet', code:'sh.app.ticket_printer.PrinterApplet.class', archive:'ticket-printer-1.0-SNAPSHOT.jar, commons-codec-1.4.jar', width:1, height:1 } ; 
+        var parameters = {jnlp_href: 'ticket-printer.jnlp'};
         deployJava.runApplet(attributes, parameters, '1.6'); 
     </script>
     
     <script language="JavaScript">
         function runAppletTest() {
-            ticketApplet.print();
+			var ticketString = CHANGE_ME;
+			var ticketString = "<?xml version=";
+            ticketApplet.printTicket(ticketString);
         }
     </script>
     
     <a href="javascript:runAppletTest();">Test me</a>
-</body>
+	</body>
 </html>

@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,6 +17,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
@@ -30,6 +30,10 @@ public class TicketRender {
 	private static final float transformToPxs = 28f / 100f;
 
 	public static void render(Ticket ticket, Graphics2D g) {
+		if (PrinterApplet.isLogEnabled()) {
+            System.out.println("Entering TicketRender.render()");
+        }
+    	
 		renderTicketPart(ticket.getForm(), g);
 
 		for (AbstractTicketElement attr : ticket.getElemets()) {

@@ -12,6 +12,8 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 
+import sh.app.ticket_printer.PrinterApplet;
+
 
 public class TicketPrinter implements Printable {
 	
@@ -68,6 +70,10 @@ public class TicketPrinter implements Printable {
     }
 
     public static void printTicket(Ticket ticket) throws PrinterException {
+    	if (PrinterApplet.isLogEnabled()) {
+            System.out.println("Entering TicketPrinter.printTicket()");
+        }
+    	
         PrinterJob printJob = PrinterJob.getPrinterJob();
         printJob.setPrintable(new TicketPrinter(ticket));
         printJob.print();
@@ -78,6 +84,10 @@ public class TicketPrinter implements Printable {
     for details) */
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+    	if (PrinterApplet.isLogEnabled()) {
+            System.out.println("Entering TicketPrinter.print()");
+        }
+    	
         if (pageIndex != 0) { /* We have only one page, and 'page' is zero-based */
             return NO_SUCH_PAGE;
         }
