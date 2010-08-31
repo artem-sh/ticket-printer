@@ -1,5 +1,7 @@
 package sh.app.ticket_printer;
 
+import static sh.app.ticket_printer.AppletVersionManager.compareInternalToExternalVersions;
+
 import java.applet.Applet;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
@@ -16,9 +18,12 @@ import sh.app.ticket_printer.ticket.TicketPrinter;
 
 public class PrinterApplet extends Applet {
 
-    private final static String DEBUG_APPLET_PARAM = "debug";
-    private final static String MAIN_ERROR_MSG = "Ошибка при печати билета";
+    private static final long serialVersionUID = -3097005524395815096L;
+    private static final String DEBUG_APPLET_PARAM = "debug";
+    private static final String VERSION_APPLET_PARAM = "appletVersion";
+    private static final String MAIN_ERROR_MSG = "Ошибка при печати билета";
     private static boolean logEnabled;
+    private boolean isPrinterReady;
 
     final static int maxCharHeight = 15;
     final static int minFontSize = 6;
@@ -33,7 +38,7 @@ public class PrinterApplet extends Applet {
     public static boolean isLogEnabled() {
         return logEnabled;
     }
-
+    
     public void init() {
         if (getParameter(DEBUG_APPLET_PARAM) != null) {
             logEnabled = true;
@@ -42,13 +47,17 @@ public class PrinterApplet extends Applet {
         if (isLogEnabled()) {
             System.out.println("Entering PrinterApplet.init()");
         }
+        
+        checkVersions();
 
-        if (!TicketPrinter.checkDefaultPrinterAvailable()) {
+        isPrinterReady = TicketPrinter.checkDefaultPrinterAvailable();
+        if (!isPrinterReady) {
             if (isLogEnabled()) {
                 System.err.println("WARNING: no default printer found");
             }
 
-            if (!TicketPrinter.checkPrintersAvailable()) {
+            isPrinterReady = TicketPrinter.checkPrintersAvailable();
+            if (!isPrinterReady) {
                 if (isLogEnabled()) {
                     System.err.println("WARNING: no printer found");
                 }
@@ -57,16 +66,19 @@ public class PrinterApplet extends Applet {
     }
 
     @Override
-    public void start() {
-    }
+    public void start() {}
 
     @Override
-    public void paint(Graphics g) {
-    }
+    public void paint(Graphics g) {}
 
     public void printTicket(String ticketString) {
         if (isLogEnabled()) {
             System.out.println("Entering PrintApplet.printTicket()");
+        }
+        
+        if (!isPrinterReady) {
+            System.err.println("Can't print ticket cause no available printers has been found, exitnig.");
+            return;
         }
 
         InputStream is = null;
@@ -83,6 +95,7 @@ public class PrinterApplet extends Applet {
         	
         	// TODO: remove later!
         	if (ticketString == null) {
+        	    System.out.println("Print test ticket for debug purpose");
 	            String xmlFileName = "/ticket1.xml";
 	            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
 	            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
@@ -111,7 +124,20 @@ public class PrinterApplet extends Applet {
             }
         }
     }
-    
+
+    private void checkVersions() {
+        if (isLogEnabled()) {
+            System.out.println("Entering PrinterApplet.checkVersions()");
+        }
+        
+        try {
+            if (compareInternalToExternalVersions(getParameter(VERSION_APPLET_PARAM)) < 0) {
+                System.err.println("WARNING: Old applet version has been loaded.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////
     // TODO: remove in production    
