@@ -45,6 +45,7 @@ public class TicketParser {
     private static final String TEXT_STYLE_ITALIC = "I";
     private static final String TEXT_STYLE_UNDERLINE = "U";
     private static final QName QNAME_FORM = QName.valueOf("form");
+    private static final QName QNAME_BORDER = QName.valueOf("border");
     private static final QName QNAME_TEXT = QName.valueOf("text");
     private static final QName QNAME_IMAGE = QName.valueOf("image");
     private static final QName QNAME_BARCODE = QName.valueOf("barcode");
@@ -84,10 +85,7 @@ public class TicketParser {
 
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            // XMLEventReader reader = factory.createXMLEventReader(new
-            // StringReader(xml));
-            XMLEventReader reader;
-            reader = factory.createXMLEventReader(new ByteArrayInputStream(xmlBytes));
+            XMLEventReader reader = factory.createXMLEventReader(new ByteArrayInputStream(xmlBytes));
 
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
@@ -117,12 +115,10 @@ public class TicketParser {
         return ticket;
     }
 
-    private static synchronized void validate(byte[] xmlBytes)
-            throws IncorrectTicketFormatException {
+    private static synchronized void validate(byte[] xmlBytes) throws IncorrectTicketFormatException {
         try {
             if (validator == null) {
-                SchemaFactory schemaFactory = SchemaFactory
-                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                 Schema schema = schemaFactory.newSchema(new StreamSource(TicketParser.class
                         .getResourceAsStream(TICKET_XSD_FILE_NAME)));
                 validator = schema.newValidator();
@@ -130,7 +126,7 @@ public class TicketParser {
 
             validator.validate(new StreamSource(new ByteArrayInputStream(xmlBytes)));
         } catch (Exception e) {
-            throw new IncorrectTicketFormatException("Некорректный формат описания билета", e);
+            throw new IncorrectTicketFormatException("Incorrect ticket description format", e);
         }
     }
 
@@ -138,6 +134,11 @@ public class TicketParser {
         Form form = new Form();
         form.setHeight(Integer.valueOf(element.getAttributeByName(QNAME_HEIGHT).getValue()));
         form.setWidth(Integer.valueOf(element.getAttributeByName(QNAME_WIDTH).getValue()));
+        
+        Attribute attr = element.getAttributeByName(QNAME_BORDER);
+        if (attr != null) {
+            form.setBorder(Integer.valueOf(attr.getValue()));
+        }
 
         targetTicket.setForm(form);
     }

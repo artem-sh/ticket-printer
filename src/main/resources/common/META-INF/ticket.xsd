@@ -13,6 +13,29 @@
   <xs:attributeGroup name="attlist.form">
     <xs:attribute name="height" use="required"/>
     <xs:attribute name="width" use="required"/>
+    <xs:attribute name="border">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="0"/>
+          <xs:enumeration value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="padding"/>
+    <xs:attribute name="padding-left"/>
+    <xs:attribute name="padding-right"/>
+    <xs:attribute name="padding-top"/>
+    <xs:attribute name="padding-bottom"/>
+    <xs:attribute name="paper-orientation">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="portrait"/>
+          <xs:enumeration value="landscape"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="paper-width"/>
+    <xs:attribute name="paper-height"/>
   </xs:attributeGroup>
   <xs:element name="barcode">
     <xs:complexType mixed="true">
@@ -22,7 +45,16 @@
   <xs:attributeGroup name="attlist.barcode">
     <xs:attribute name="x" use="required"/>
     <xs:attribute name="y" use="required"/>
-    <xs:attribute name="rotation"/>
+    <xs:attribute name="rotation">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="0"/>
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:attributeGroup>
   <xs:element name="image">
     <xs:complexType mixed="true">
@@ -32,7 +64,16 @@
   <xs:attributeGroup name="attlist.image">
     <xs:attribute name="x" use="required"/>
     <xs:attribute name="y" use="required"/>
-    <xs:attribute name="rotation"/>
+    <xs:attribute name="rotation">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="0"/>
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:attributeGroup>
   <xs:element name="text">
     <xs:complexType mixed="true">
@@ -43,7 +84,16 @@
     <xs:attribute name="x" use="required"/>
     <xs:attribute name="y" use="required"/>
     <xs:attribute name="font"/>
-    <xs:attribute name="rotation"/>
+    <xs:attribute name="rotation">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="0"/>
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="size"/>
     <xs:attribute name="style"/>
   </xs:attributeGroup>

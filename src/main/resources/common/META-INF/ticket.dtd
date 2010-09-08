@@ -1,0 +1,30 @@
+<!ELEMENT form ( barcode | image | text )* >
+<!ATTLIST form height CDATA #REQUIRED >
+<!ATTLIST form width CDATA #REQUIRED >
+<!ATTLIST form border (0|1) #IMPLIED >
+<!ATTLIST form padding CDATA #IMPLIED>
+<!ATTLIST form padding-left CDATA #IMPLIED>
+<!ATTLIST form padding-right CDATA #IMPLIED>
+<!ATTLIST form padding-top CDATA #IMPLIED>
+<!ATTLIST form padding-bottom CDATA #IMPLIED>
+<!ATTLIST form paper-orientation (portrait|landscape) #IMPLIED>
+<!ATTLIST form paper-width CDATA #IMPLIED>
+<!ATTLIST form paper-height CDATA #IMPLIED>
+
+<!ELEMENT barcode ( #PCDATA ) >
+<!ATTLIST barcode x CDATA #REQUIRED >
+<!ATTLIST barcode y CDATA #REQUIRED >
+<!ATTLIST barcode rotation (0|1|2|3) #IMPLIED>
+
+<!ELEMENT image ( #PCDATA ) >
+<!ATTLIST image x CDATA #REQUIRED >
+<!ATTLIST image y CDATA #REQUIRED >
+<!ATTLIST image rotation (0|1|2|3) #IMPLIED >
+
+<!ELEMENT text ( #PCDATA ) >
+<!ATTLIST text x CDATA #REQUIRED >
+<!ATTLIST text y CDATA #REQUIRED >
+<!ATTLIST text font CDATA #IMPLIED >
+<!ATTLIST text rotation (0|1|2|3) #IMPLIED >
+<!ATTLIST text size CDATA #IMPLIED >
+<!ATTLIST text style CDATA #IMPLIED >
