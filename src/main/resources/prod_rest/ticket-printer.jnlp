@@ -4,12 +4,14 @@
         <title>Ticket printer</title>
         <vendor>Artem Shiyanov</vendor>
     </information>
+    
     <resources>
         <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
         <jar href="ticket-printer.jar" main="true" version="PRINTER_APPLET_VERSION"/>
         <jar href="commons-codec-1.4.jar" />
         <property name="jnlp.versionEnabled" value="true"/>
     </resources>
+    
     <applet-desc 
          name="Ticket printer applet for kino-s.ru"
          main-class="sh.app.ticket_printer.PrinterApplet"
@@ -19,5 +21,6 @@
          <param name="appletVersion" value="PRINTER_APPLET_VERSION"/>
          <param name="debug" value=""/>
      </applet-desc>
+     
      <update check="background"/>
 </jnlp>

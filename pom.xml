@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>sh.app</groupId>
   <artifactId>ticket-printer</artifactId>
@@ -54,8 +53,7 @@
                       <fileset dir="${basedir}/src/main/resources/prod_rest" />
                     </copy>
                     <copy file="${project.build.directory}/ticket-printer-${version}.jar" tofile="${project.build.directory}/prod/ticket-printer__V${version}.jar" />
-                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"
-                      todir="${project.build.directory}/prod" />
+                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" todir="${project.build.directory}/prod" />
                   </tasks>
                 </configuration>
               </execution>
@@ -112,8 +110,7 @@
                     <copy file="${basedir}/src/main/resources/prod_rest/deployJava.js" todir="${basedir}/../webpage/WebContent" overwrite="true" />
                     <copy file="${basedir}/src/main/resources/prod_rest/ticket-printer.jnlp" todir="${basedir}/../webpage/WebContent" overwrite="true" />
                     <copy file="${project.build.directory}/ticket-printer-${version}.jar" tofile="${basedir}/../webpage/WebContent/ticket-printer__V${version}.jar" overwrite="true" />
-                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"
-                      todir="${basedir}/../webpage/WebContent" overwrite="true" />
+                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" todir="${basedir}/../webpage/WebContent" overwrite="true" />
                   </tasks>
                 </configuration>
               </execution>
@@ -134,7 +131,7 @@
             </executions>
             <configuration>
               <basedir>../webpage</basedir>
-              <filesToInclude> 
+              <filesToInclude>
                 src/sh/app/ticket_printer_webpage/sample.html,
                 WebContent/ticket-printer.jnlp
               </filesToInclude>
@@ -190,9 +187,23 @@
         </executions>
       </plugin>
 
-      <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> <executions> <execution> 
-        <goals> <goal>sign</goal> </goals> </execution> </executions> <configuration> <keystore>kino-s.keystore</keystore> <alias>business</alias> 
-        <storepass>HvXSdPRLPa</storepass> <verify>true</verify> </configuration> </plugin> -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <keystore>kino-s.keystore</keystore>
+          <alias>business</alias>
+          <storepass>HvXSdPRLPa</storepass>
+          <verify>true</verify>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
