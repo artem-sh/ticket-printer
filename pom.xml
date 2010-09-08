@@ -186,24 +186,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <keystore>kino-s.keystore</keystore>
-          <alias>business</alias>
-          <storepass>HvXSdPRLPa</storepass>
-          <verify>true</verify>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
