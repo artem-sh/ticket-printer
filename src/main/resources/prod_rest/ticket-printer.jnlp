@@ -17,10 +17,7 @@
          main-class="sh.app.ticket_printer.PrinterApplet"
          width="1"
          height="1">
-         
-         <param name="appletVersion" value="PRINTER_APPLET_VERSION"/>
-         <param name="debug" value=""/>
      </applet-desc>
      
-     <update check="background"/>
+     <update check="always" policy="always">
 </jnlp>

@@ -3,12 +3,12 @@
   <groupId>sh.app</groupId>
   <artifactId>ticket-printer</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0.0</version>
+  <version>1.0.0.2</version>
   <name>Ticket printer</name>
-
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sh.app.ticket_printer_webpage.basedir>d:/my_tmp/projects/webpage</sh.app.ticket_printer_webpage.basedir>
   </properties>
 
 
@@ -106,11 +106,14 @@
                 </goals>
                 <configuration>
                   <tasks>
-                    <copy file="${basedir}/src/main/resources/prod_rest/sample.html" todir="${basedir}/../webpage/src/sh/app/ticket_printer_webpage" overwrite="true" />
-                    <copy file="${basedir}/src/main/resources/prod_rest/deployJava.js" todir="${basedir}/../webpage/WebContent" overwrite="true" />
-                    <copy file="${basedir}/src/main/resources/prod_rest/ticket-printer.jnlp" todir="${basedir}/../webpage/WebContent" overwrite="true" />
-                    <copy file="${project.build.directory}/ticket-printer-${version}.jar" tofile="${basedir}/../webpage/WebContent/ticket-printer__V${version}.jar" overwrite="true" />
-                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" todir="${basedir}/../webpage/WebContent" overwrite="true" />
+                    <delete>
+                      <fileset dir="${sh.app.ticket_printer_webpage.basedir}/WebContent" includes="*.???"/>
+                    </delete>
+                    <copy file="${basedir}/src/main/resources/prod_rest/sample.html" todir="${sh.app.ticket_printer_webpage.basedir}/src/sh/app/ticket_printer_webpage" overwrite="true" />
+                    <copy file="${basedir}/src/main/resources/prod_rest/deployJava.js" todir="${sh.app.ticket_printer_webpage.basedir}/WebContent" overwrite="true" />
+                    <copy file="${basedir}/src/main/resources/prod_rest/ticket-printer.jnlp" todir="${sh.app.ticket_printer_webpage.basedir}/WebContent" overwrite="true" />
+                    <copy file="${project.build.directory}/ticket-printer-${version}.jar" tofile="${sh.app.ticket_printer_webpage.basedir}/WebContent/ticket-printer__V${version}.jar" overwrite="true" />
+                    <copy file="${settings.localRepository}/commons-codec/commons-codec/1.4/commons-codec-1.4.jar" todir="${sh.app.ticket_printer_webpage.basedir}/WebContent" overwrite="true" />
                   </tasks>
                 </configuration>
               </execution>
@@ -130,7 +133,7 @@
               </execution>
             </executions>
             <configuration>
-              <basedir>../webpage</basedir>
+              <basedir>${sh.app.ticket_printer_webpage.basedir}</basedir>
               <filesToInclude>
                 src/sh/app/ticket_printer_webpage/sample.html,
                 WebContent/ticket-printer.jnlp
@@ -174,13 +177,13 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <phase>process-resources</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
             <configuration>
               <tasks>
-                <echo file="${basedir}/src/main/resources/common/META-INF/VERSION" encoding="UTF-8" message="${version}" />
+                <echo file="${basedir}/src/main/resources/common/META-INF/VERSION" encoding="UTF-8" message="${version}"/>
               </tasks>
             </configuration>
           </execution>

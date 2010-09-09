@@ -9,7 +9,7 @@
     <script src="deployJava.js"></script>
     <script language="JavaScript">
         var attributes = { id:'ticketApplet', code:'sh.app.ticket_printer.PrinterApplet.class', archive:'ticket-printer__VPRINTER_APPLET_VERSION.jar, commons-codec-1.4.jar', width:1, height:1 } ; 
-        var parameters = {jnlp_href: 'ticket-printer.jnlp'};
+        var parameters = {jnlp_href:'ticket-printer.jnlp', appletVersion:'PRINTER_APPLET_VERSION', debug:'true'};
         deployJava.runApplet(attributes, parameters, '1.6'); 
     </script>
     
@@ -17,7 +17,10 @@
         function runAppletTest() {
 			var ticketString = CHANGE_ME;
 			try {
-				ticketApplet.printTicket(ticketString);
+				var result = ticketApplet.sendDataToPrinter(ticketString);
+				if (result != 0) {
+					alert('Ticket can not be printed, see logs in Java console for details');
+				}
 			} catch (e) {
 				alert(e);
 			}

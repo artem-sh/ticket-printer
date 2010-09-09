@@ -29,7 +29,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.exception.CustomTicketParserException;
-import sh.app.ticket_printer.exception.IncorrectTicketFormatException;
 import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
@@ -66,8 +65,7 @@ public class TicketParser {
         fontFamilies = new HashSet<String>(Arrays.asList(ge.getAvailableFontFamilyNames()));
     }
 
-    public static Ticket parse(String xml) throws IncorrectTicketFormatException,
-            TicketParserException {
+    public static Ticket parse(String xml) throws TicketParserException {
         if (isLogEnabled()) {
             System.out.println("DEBUG: TicketParser.parse(): got xml to parse: " + xml);
         }
@@ -115,7 +113,7 @@ public class TicketParser {
         return ticket;
     }
 
-    private static synchronized void validate(byte[] xmlBytes) throws IncorrectTicketFormatException {
+    private static synchronized void validate(byte[] xmlBytes) throws TicketParserException {
         try {
             if (validator == null) {
                 SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -126,7 +124,7 @@ public class TicketParser {
 
             validator.validate(new StreamSource(new ByteArrayInputStream(xmlBytes)));
         } catch (Exception e) {
-            throw new IncorrectTicketFormatException("Incorrect ticket description format", e);
+            throw new TicketParserException("Incorrect ticket description format", e);
         }
     }
 
