@@ -3,12 +3,13 @@
   <groupId>sh.app</groupId>
   <artifactId>ticket-printer</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0.2</version>
+  <version>1.0.0.3</version>
   <name>Ticket printer</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sh.app.ticket_printer_webpage.basedir>d:/my_tmp/projects/webpage</sh.app.ticket_printer_webpage.basedir>
+    <!-- <sh.app.ticket_printer_webpage.basedir>d:/my_tmp/projects/webpage</sh.app.ticket_printer_webpage.basedir>  -->
+    <sh.app.ticket_printer_webpage.basedir>${basedir}/../webpage</sh.app.ticket_printer_webpage.basedir>
   </properties>
 
 

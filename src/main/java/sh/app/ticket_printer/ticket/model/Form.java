@@ -4,23 +4,25 @@ import java.security.InvalidParameterException;
 
 public class Form implements TicketPart {
     
-    private Integer width;
-    private Integer height;
+    private float width;
+    private float height;
+    private float paperWidth;
+    private float paperHeight;
     private int border;
     
-    public Integer getWidth() {
+    public float getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(float width) {
         this.width = width;
     }
 
-    public Integer getHeight() {
+    public float getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(float height) {
         this.height = height;
     }
     
@@ -36,6 +38,22 @@ public class Form implements TicketPart {
         border = borderValue;
     }
     
+    public float getPaperWidth() {
+        return paperWidth;
+    }
+    
+    public void setPaperWidth(float paperWidth) {
+        this.paperWidth = paperWidth;
+    }
+
+    public float getPaperHeight() {
+        return paperHeight;
+    }
+
+    public void setPaperHeight(float paperHeight) {
+        this.paperHeight = paperHeight;
+    }
+
     @Override
     public TicketPartType getType() {
         return TicketPartType.FORM;
@@ -43,6 +61,7 @@ public class Form implements TicketPart {
     
     @Override
     public String toString() {
-        return "Form [height=" + height + ", width=" + width + ", border=" + border + "]";
+        return "Form [paperWidth=" + paperWidth + ", paperHeight=" + paperHeight + ", height="
+                + height + ", width=" + width + ", border=" + border + "]";
     }
 }

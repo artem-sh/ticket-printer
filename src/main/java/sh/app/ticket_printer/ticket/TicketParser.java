@@ -45,6 +45,8 @@ public class TicketParser {
     private static final String TEXT_STYLE_UNDERLINE = "U";
     private static final QName QNAME_FORM = QName.valueOf("form");
     private static final QName QNAME_BORDER = QName.valueOf("border");
+    private static final QName QNAME_PAPER_WIDTH = QName.valueOf("paper-width");
+    private static final QName QNAME_PAPER_HEIGTH = QName.valueOf("paper-height");
     private static final QName QNAME_TEXT = QName.valueOf("text");
     private static final QName QNAME_IMAGE = QName.valueOf("image");
     private static final QName QNAME_BARCODE = QName.valueOf("barcode");
@@ -130,12 +132,22 @@ public class TicketParser {
 
     private static void processFormElement(StartElement element, Ticket targetTicket) {
         Form form = new Form();
-        form.setHeight(Integer.valueOf(element.getAttributeByName(QNAME_HEIGHT).getValue()));
-        form.setWidth(Integer.valueOf(element.getAttributeByName(QNAME_WIDTH).getValue()));
+        form.setHeight(Float.valueOf(element.getAttributeByName(QNAME_HEIGHT).getValue()));
+        form.setWidth(Float.valueOf(element.getAttributeByName(QNAME_WIDTH).getValue()));
         
         Attribute attr = element.getAttributeByName(QNAME_BORDER);
         if (attr != null) {
             form.setBorder(Integer.valueOf(attr.getValue()));
+        }
+        
+        attr = element.getAttributeByName(QNAME_PAPER_WIDTH);
+        if (attr != null) {
+            form.setPaperWidth(Float.valueOf(attr.getValue()));
+        }
+        
+        attr = element.getAttributeByName(QNAME_PAPER_HEIGTH);
+        if (attr != null) {
+            form.setPaperHeight(Float.valueOf(attr.getValue()));
         }
 
         targetTicket.setForm(form);
