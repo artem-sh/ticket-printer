@@ -3,6 +3,7 @@ package sh.app.ticket_printer.ticket;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
@@ -57,9 +58,15 @@ public class TicketPrinter implements Printable {
         if (PrinterApplet.isLogEnabled()) {
             System.out.println("Entering TicketPrinter.printTicket()");
         }
-        
+
+        PageFormat format = new PageFormat();
+        Paper paper = new Paper();
+        paper.setImageableArea(0, 0, Double.MAX_VALUE, Double.MAX_VALUE);
+        format.setPaper(paper);
+ 
         PrinterJob printJob = PrinterJob.getPrinterJob();
-        printJob.setPrintable(new TicketPrinter(ticket));
+        format = printJob.validatePage(format);
+        printJob.setPrintable(new TicketPrinter(ticket), format);
         printJob.print();
     }
     

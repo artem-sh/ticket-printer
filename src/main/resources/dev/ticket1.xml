@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form width="500" height="1060">
+<form width="500" height="1060" border="1">
   <text font="Verdana" size="8" x="0" y="0"><![CDATA[Дата: 12.02.2010]]></text>
   <text x="220" y="300"><![CDATA[Зал: Малый]]></text>
   <text x="220" y="350"><![CDATA[Ряд: 2]]></text>

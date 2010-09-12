@@ -60,10 +60,9 @@ public class TicketRender {
 		}
 	}
 
-	private static void renderForm(Form form, Graphics2D g) {
+    private static void renderForm(Form form, Graphics2D g) {
 		if (form.hasBorder()) {
-			g.draw(new Rectangle2D.Double(0, 0, form.getHeight()
-					* transformToPxs, form.getWidth() * transformToPxs));
+			g.draw(new Rectangle2D.Double(0, 0, form.getHeight()* transformToPxs, form.getWidth() * transformToPxs));
 		}
 	}
 
