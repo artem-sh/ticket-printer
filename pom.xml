@@ -3,7 +3,7 @@
   <groupId>sh.app</groupId>
   <artifactId>ticket-printer</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0.3</version>
+  <version>1.0.0.4</version>
   <name>Ticket printer</name>
 
   <properties>

@@ -10,6 +10,7 @@ import java.awt.print.PrinterJob;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.security.InvalidParameterException;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -26,6 +27,8 @@ import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 
 import sh.app.ticket_printer.PrinterApplet;
+import sh.app.ticket_printer.ticket.model.Form;
+import sh.app.ticket_printer.ticket.model.Form.PaperOrientation;
 
 public class TicketPrinter implements Printable {
     
@@ -77,6 +80,11 @@ public class TicketPrinter implements Printable {
         paper.setSize(transformMmToPoint * ticket.getForm().getPaperWidth(),
                 transformMmToPoint * ticket.getForm().getPaperHeight());
         format.setPaper(paper);
+        
+        PaperOrientation paperOrientation = ticket.getForm().getPaperOrientation();
+        if (paperOrientation != null) {
+            format.setOrientation(getPageOrientationValue(paperOrientation));
+        }
  
         PrinterJob printJob = PrinterJob.getPrinterJob();
 //        PrintService defaultPs = PrintServiceLookup.lookupDefaultPrintService();
@@ -94,6 +102,22 @@ public class TicketPrinter implements Printable {
         format = printJob.validatePage(format);
         printJob.setPrintable(new TicketPrinter(ticket), format);
         printJob.print();
+    }
+    
+    private static int getPageOrientationValue(Form.PaperOrientation orientation) {
+        int orientationValue;
+        switch (orientation) {
+        case LANDSCAPE:
+            orientationValue = PageFormat.LANDSCAPE;
+            break;
+        case PORTRAIT:
+            orientationValue = PageFormat.PORTRAIT;
+            break;
+        default:
+            throw new InvalidParameterException("Incorrect paper orientation parameter has been specified");
+        }
+        
+        return orientationValue;
     }
 
     /*

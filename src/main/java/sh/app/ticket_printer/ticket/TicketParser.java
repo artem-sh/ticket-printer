@@ -33,6 +33,7 @@ import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
 import sh.app.ticket_printer.ticket.model.Form;
+import sh.app.ticket_printer.ticket.model.Form.PaperOrientation;
 import sh.app.ticket_printer.ticket.model.Image;
 import sh.app.ticket_printer.ticket.model.Text;
 
@@ -43,8 +44,15 @@ public class TicketParser {
     private static final String TEXT_STYLE_BOLD = "B";
     private static final String TEXT_STYLE_ITALIC = "I";
     private static final String TEXT_STYLE_UNDERLINE = "U";
+    private static final String FORM_PAPER_ORIENTATION_PORTRAIT = "portrait";
+    private static final String FORM_PAPER_ORIENTATION_LANDSCAPE = "landscape";
     private static final QName QNAME_FORM = QName.valueOf("form");
     private static final QName QNAME_BORDER = QName.valueOf("border");
+    private static final QName QNAME_PAPER_ORIENTATION = QName.valueOf("paper-orientation");
+    private static final QName QNAME_PADDING_LEFT = QName.valueOf("padding-left");
+    private static final QName QNAME_PADDING_RIGHT = QName.valueOf("padding-right");
+    private static final QName QNAME_PADDING_TOP = QName.valueOf("padding-top");
+    private static final QName QNAME_PADDING_BOTTOM = QName.valueOf("padding-bottom");
     private static final QName QNAME_PAPER_WIDTH = QName.valueOf("paper-width");
     private static final QName QNAME_PAPER_HEIGTH = QName.valueOf("paper-height");
     private static final QName QNAME_TEXT = QName.valueOf("text");
@@ -135,7 +143,16 @@ public class TicketParser {
         form.setHeight(Float.valueOf(element.getAttributeByName(QNAME_HEIGHT).getValue()));
         form.setWidth(Float.valueOf(element.getAttributeByName(QNAME_WIDTH).getValue()));
         
-        Attribute attr = element.getAttributeByName(QNAME_BORDER);
+        Attribute attr = element.getAttributeByName(QNAME_PAPER_ORIENTATION);
+        if (attr != null) {
+            if (FORM_PAPER_ORIENTATION_PORTRAIT.equals(attr.getValue())) {
+                form.setPaperOrientation(PaperOrientation.PORTRAIT);
+            } else if (FORM_PAPER_ORIENTATION_LANDSCAPE.equals(attr.getValue())) {
+                form.setPaperOrientation(PaperOrientation.LANDSCAPE);
+            }
+        }
+        
+        attr = element.getAttributeByName(QNAME_BORDER);
         if (attr != null) {
             form.setBorder(Integer.valueOf(attr.getValue()));
         }
