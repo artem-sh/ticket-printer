@@ -14,7 +14,7 @@
     </script>
     
     <script language="JavaScript">
-        function runAppletTest() {
+        function printTestTicket() {
 			var ticketString = CHANGE_ME;
 			try {
 				var result = ticketApplet.sendDataToPrinter(ticketString);
@@ -27,6 +27,25 @@
         }
     </script>
     
-    <a href="javascript:runAppletTest();">Test me</a>
+    <script language="JavaScript">
+        function checkPrinterReady() {
+			try {
+				var result = ticketApplet.getPrinterStatus();
+				if (result == 0) {
+					alert('Printer is not ready');
+				} else if (result == 1) {
+					alert('Printer is ready');
+				} else {
+					alert('Got unexpected answer');
+				}
+			} catch (e) {
+				alert(e);
+			}
+        }
+    </script>
+    
+    <a href="javascript:checkPrinterReady();">Check if printer is ready</a>
+    <br/><br/>
+    <a href="javascript:printTestTicket();">Print test ticket</a>
 	</body>
 </html>

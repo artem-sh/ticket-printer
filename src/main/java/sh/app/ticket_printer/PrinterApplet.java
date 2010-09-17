@@ -17,7 +17,6 @@ import sh.app.ticket_printer.ticket.TicketPrinter;
 
 public class PrinterApplet extends Applet {
 
-    private static final long serialVersionUID = -3097005524395815096L;
     private static final String DEBUG_APPLET_PARAM = "debug";
     private static final String DEBUG_ENABLED_VALUE = "true";
     private static final String VERSION_APPLET_PARAM = "appletVersion";
@@ -25,6 +24,8 @@ public class PrinterApplet extends Applet {
     private static final int RESULT_UNKNOWN_ERROR = 1;
     private static final int RESULT_PRINTER_IS_UNAVAILABLE = 2;
     private static final int RESULT_INCORRECT_PARAMS = 3;
+    private static final int RESULT_PRINTER_READY = 1;
+    private static final int RESULT_PRINTER_NOT_READY = 0;
     private static boolean logEnabled;
 
     public static boolean isLogEnabled() {
@@ -48,6 +49,14 @@ public class PrinterApplet extends Applet {
 
     @Override
     public void paint(Graphics g) {}
+    
+    public int getPrinterStatus() {
+        if (isLogEnabled()) {
+            System.out.println("Entering PrintApplet.getPrinterStatus()");
+        }
+        
+        return TicketPrinter.checkPrinterReady() ? RESULT_PRINTER_READY : RESULT_PRINTER_NOT_READY; 
+    }
 
     public int sendDataToPrinter(String ticketString) {
         if (isLogEnabled()) {
