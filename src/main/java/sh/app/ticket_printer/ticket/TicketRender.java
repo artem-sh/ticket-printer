@@ -36,7 +36,7 @@ public class TicketRender {
     	
 		renderTicketPart(ticket.getForm(), g);
 
-		for (AbstractTicketElement attr : ticket.getElemets()) {
+		for (AbstractTicketElement attr : ticket.getElements()) {
 			renderTicketPart(attr, g);
 		}
 	}

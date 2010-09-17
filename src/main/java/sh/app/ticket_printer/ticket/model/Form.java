@@ -4,31 +4,31 @@ import java.security.InvalidParameterException;
 
 public class Form implements TicketPart {
     
-    private float width;
-    private float height;
-    private float paddingLeft;
-    private float paddingRight;
-    private float paddingTop;
-    private float paddingBottom;
-    private float paperWidth;
-    private float paperHeight;
+    private Float width;
+    private Float height;
+    private Float paddingLeft;
+    private Float paddingRight;
+    private Float paddingTop;
+    private Float paddingBottom;
+    private Float paperWidth;
+    private Float paperHeight;
     private int border;
     public enum PaperOrientation {PORTRAIT, LANDSCAPE};
     private PaperOrientation paperOrientation;
     
-    public float getWidth() {
+    public Float getWidth() {
         return width;
     }
 
-    public void setWidth(float width) {
+    public void setWidth(Float width) {
         this.width = width;
     }
 
-    public float getHeight() {
+    public Float getHeight() {
         return height;
     }
 
-    public void setHeight(float height) {
+    public void setHeight(Float height) {
         this.height = height;
     }
     
@@ -44,51 +44,51 @@ public class Form implements TicketPart {
         border = borderValue;
     }
     
-    public float getPaperWidth() {
+    public Float getPaperWidth() {
         return paperWidth;
     }
     
-    public void setPaperWidth(float paperWidth) {
+    public void setPaperWidth(Float paperWidth) {
         this.paperWidth = paperWidth;
     }
 
-    public float getPaperHeight() {
+    public Float getPaperHeight() {
         return paperHeight;
     }
 
-    public void setPaperHeight(float paperHeight) {
+    public void setPaperHeight(Float paperHeight) {
         this.paperHeight = paperHeight;
     }
     
-    public float getPaddingLeft() {
+    public Float getPaddingLeft() {
         return paddingLeft;
     }
     
-    public void setPaddingLeft(float paddingLeft) {
+    public void setPaddingLeft(Float paddingLeft) {
         this.paddingLeft = paddingLeft;
     }
     
-    public float getPaddingRight() {
+    public Float getPaddingRight() {
         return paddingRight;
     }
     
-    public void setPaddingRight(float paddingRight) {
+    public void setPaddingRight(Float paddingRight) {
         this.paddingRight = paddingRight;
     }
 
-    public float getPaddingTop() {
+    public Float getPaddingTop() {
         return paddingTop;
     }
 
-    public void setPaddingTop(float paddingTop) {
+    public void setPaddingTop(Float paddingTop) {
         this.paddingTop = paddingTop;
     }
     
-    public float getPaddingBottom() {
+    public Float getPaddingBottom() {
         return paddingBottom;
     }
 
-    public void setPaddingBottom(float paddingBottom) {
+    public void setPaddingBottom(Float paddingBottom) {
         this.paddingBottom = paddingBottom;
     }
 
@@ -108,7 +108,7 @@ public class Form implements TicketPart {
     @Override
     public String toString() {
         return "Form [paperWidth=" + paperWidth + ", paperHeight=" + paperHeight + ", border="
-                + border + ", paperOrientation=" + paperOrientation + "width=" + width
+                + border + ", paperOrientation=" + paperOrientation + ", width=" + width
                 + ", height=" + height + ", paddingLeft=" + paddingLeft + ", paddingRight="
                 + paddingRight + ", paddingTop=" + paddingTop + ", paddingBottom=" + paddingBottom + "]";
     }

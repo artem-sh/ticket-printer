@@ -3,7 +3,6 @@ package sh.app.ticket_printer.exception;
 
 public class TicketParserException extends Exception {
 
-    private static final long serialVersionUID = -2813194672030977519L;
     private static final String ERROR_MSG = "Error while parsing ticket data";
 
     public TicketParserException(String text) {

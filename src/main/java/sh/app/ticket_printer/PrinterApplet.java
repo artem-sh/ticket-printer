@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import sh.app.ticket_printer.exception.IncorrectTicketDescriptionException;
 import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.Ticket;
 import sh.app.ticket_printer.ticket.TicketParser;
@@ -78,6 +79,11 @@ public class PrinterApplet extends Applet {
             Ticket ticket = TicketParser.parse(ticketString);
             TicketPrinter.printTicket(ticket);
         } catch (TicketParserException e) {
+            System.err.println("Syntax error revealed in ticket description.");
+            printExceptionAndCause(e);
+            return RESULT_INCORRECT_PARAMS;
+        } catch (IncorrectTicketDescriptionException e) {
+            System.err.println("Logical error revealed in ticket description.");
             printExceptionAndCause(e);
             return RESULT_INCORRECT_PARAMS;
         } catch (Throwable t) {

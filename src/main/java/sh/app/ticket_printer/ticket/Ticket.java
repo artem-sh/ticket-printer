@@ -12,7 +12,7 @@ import sh.app.ticket_printer.ticket.model.Form;
 public class Ticket implements Printable {
 
     private Form form;
-    private final LinkedList<AbstractTicketElement> elemets = new LinkedList<AbstractTicketElement>();
+    private final LinkedList<AbstractTicketElement> elements = new LinkedList<AbstractTicketElement>();
 
     public Form getForm() {
         return form;
@@ -22,8 +22,8 @@ public class Ticket implements Printable {
         this.form = form;
     }
 
-    public LinkedList<AbstractTicketElement> getElemets() {
-        return elemets;
+    public LinkedList<AbstractTicketElement> getElements() {
+        return elements;
     }
 
     @Override
@@ -34,6 +34,6 @@ public class Ticket implements Printable {
 
     @Override
     public String toString() {
-        return "Ticket [form=" + form + ", elemets=" + elemets + "]";
+        return "Ticket [form=" + form + ", elements=" + elements + "]";
     }
 }

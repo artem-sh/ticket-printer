@@ -1,6 +1,7 @@
 package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
+import static sh.app.ticket_printer.util.PrimitiveTypeExctractor.floatValue;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -28,7 +29,7 @@ import javax.xml.validation.Validator;
 import org.apache.commons.codec.binary.Base64;
 
 import sh.app.ticket_printer.PrinterApplet;
-import sh.app.ticket_printer.exception.CustomTicketParserException;
+import sh.app.ticket_printer.exception.IncorrectTicketDescriptionException;
 import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
 import sh.app.ticket_printer.ticket.model.Barcode;
@@ -39,6 +40,7 @@ import sh.app.ticket_printer.ticket.model.Text;
 
 public class TicketParser {
 
+    private static final float UNIT_TO_MM = 0.1f;
     private static final String TICKET_XML_ENCODING = "UTF-8";
     private static final String TICKET_XSD_FILE_NAME = "/META-INF/ticket.xsd";
     private static final String TEXT_STYLE_BOLD = "B";
@@ -49,12 +51,13 @@ public class TicketParser {
     private static final QName QNAME_FORM = QName.valueOf("form");
     private static final QName QNAME_BORDER = QName.valueOf("border");
     private static final QName QNAME_PAPER_ORIENTATION = QName.valueOf("paper-orientation");
+    private static final QName QNAME_PAPER_WIDTH = QName.valueOf("paper-width");
+    private static final QName QNAME_PAPER_HEIGTH = QName.valueOf("paper-height");
+    private static final QName QNAME_PADDING = QName.valueOf("padding");
     private static final QName QNAME_PADDING_LEFT = QName.valueOf("padding-left");
     private static final QName QNAME_PADDING_RIGHT = QName.valueOf("padding-right");
     private static final QName QNAME_PADDING_TOP = QName.valueOf("padding-top");
     private static final QName QNAME_PADDING_BOTTOM = QName.valueOf("padding-bottom");
-    private static final QName QNAME_PAPER_WIDTH = QName.valueOf("paper-width");
-    private static final QName QNAME_PAPER_HEIGTH = QName.valueOf("paper-height");
     private static final QName QNAME_TEXT = QName.valueOf("text");
     private static final QName QNAME_IMAGE = QName.valueOf("image");
     private static final QName QNAME_BARCODE = QName.valueOf("barcode");
@@ -75,7 +78,7 @@ public class TicketParser {
         fontFamilies = new HashSet<String>(Arrays.asList(ge.getAvailableFontFamilyNames()));
     }
 
-    public static Ticket parse(String xml) throws TicketParserException {
+    public static Ticket parse(String xml) throws TicketParserException, IncorrectTicketDescriptionException {
         if (isLogEnabled()) {
             System.out.println("DEBUG: TicketParser.parse(): got xml to parse: " + xml);
         }
@@ -84,7 +87,7 @@ public class TicketParser {
         try {
             xmlBytes = xml.getBytes(TICKET_XML_ENCODING);
         } catch (UnsupportedEncodingException e) {
-            throw new CustomTicketParserException("Problem with encoding");
+            throw new TicketParserException("Problem with encoding");
         }
 
         validate(xmlBytes);
@@ -112,8 +115,6 @@ public class TicketParser {
             }
         } catch (XMLStreamException e) {
             throw new TicketParserException(e);
-        } catch (CustomTicketParserException e) {
-            throw new TicketParserException(e);
         }
 
         if (isLogEnabled()) {
@@ -138,11 +139,14 @@ public class TicketParser {
         }
     }
 
-    private static void processFormElement(StartElement element, Ticket targetTicket) {
+    private static void processFormElement(StartElement element, Ticket targetTicket)
+            throws IncorrectTicketDescriptionException {
         Form form = new Form();
         form.setHeight(Float.valueOf(element.getAttributeByName(QNAME_HEIGHT).getValue()));
         form.setWidth(Float.valueOf(element.getAttributeByName(QNAME_WIDTH).getValue()));
-        
+
+        processFormPaddingAttributes(form, element);
+
         Attribute attr = element.getAttributeByName(QNAME_PAPER_ORIENTATION);
         if (attr != null) {
             if (FORM_PAPER_ORIENTATION_PORTRAIT.equals(attr.getValue())) {
@@ -151,27 +155,53 @@ public class TicketParser {
                 form.setPaperOrientation(PaperOrientation.LANDSCAPE);
             }
         }
-        
         attr = element.getAttributeByName(QNAME_BORDER);
         if (attr != null) {
             form.setBorder(Integer.valueOf(attr.getValue()));
         }
-        
         attr = element.getAttributeByName(QNAME_PAPER_WIDTH);
         if (attr != null) {
             form.setPaperWidth(Float.valueOf(attr.getValue()));
         }
-        
         attr = element.getAttributeByName(QNAME_PAPER_HEIGTH);
         if (attr != null) {
             form.setPaperHeight(Float.valueOf(attr.getValue()));
         }
 
+        validateFormElement(form);
         targetTicket.setForm(form);
     }
 
-    private static void processTextElement(XMLEventReader reader, StartElement element,
-            Ticket targetTicket) throws CustomTicketParserException, XMLStreamException {
+    private static void processFormPaddingAttributes(Form form, StartElement element) {
+        Attribute attr = element.getAttributeByName(QNAME_PADDING);
+        if (attr != null) {
+            Float padding = Float.valueOf(attr.getValue());
+            form.setPaddingTop(padding);
+            form.setPaddingRight(padding);
+            form.setPaddingBottom(padding);
+            form.setPaddingLeft(padding);
+        }
+
+        attr = element.getAttributeByName(QNAME_PADDING_TOP);
+        if (attr != null) {
+            form.setPaddingTop(Float.valueOf(attr.getValue()));
+        }
+        attr = element.getAttributeByName(QNAME_PADDING_RIGHT);
+        if (attr != null) {
+            form.setPaddingRight(Float.valueOf(attr.getValue()));
+        }
+        attr = element.getAttributeByName(QNAME_PADDING_BOTTOM);
+        if (attr != null) {
+            form.setPaddingBottom(Float.valueOf(attr.getValue()));
+        }
+        attr = element.getAttributeByName(QNAME_PADDING_LEFT);
+        if (attr != null) {
+            form.setPaddingLeft(Float.valueOf(attr.getValue()));
+        }
+    }
+
+    private static void processTextElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
+            throws TicketParserException, XMLStreamException {
         Text text = new Text();
 
         processAbstractTicketAttr(text, element);
@@ -191,17 +221,15 @@ public class TicketParser {
 
         text.setData(parseText(reader));
 
-        targetTicket.getElemets().add(text);
+        targetTicket.getElements().add(text);
     }
 
-    private static void processTextStyle(Text text, String style)
-            throws CustomTicketParserException {
+    private static void processTextStyle(Text text, String style) throws TicketParserException {
         if ((style == null) || style.isEmpty()) {
             return;
         }
         if (style.length() > 3) {
-            throw new CustomTicketParserException(
-                    "Incorrect value for text 'style' attribute of 'text' element");
+            throw new TicketParserException("Incorrect value for text 'style' attribute of 'text' element");
         }
 
         style = style.toUpperCase(Locale.ENGLISH);
@@ -216,8 +244,8 @@ public class TicketParser {
         }
     }
 
-    private static void processImageElement(XMLEventReader reader, StartElement element,
-            Ticket targetTicket) throws CustomTicketParserException, XMLStreamException {
+    private static void processImageElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
+            throws TicketParserException, XMLStreamException {
         Image image = new Image();
 
         processAbstractTicketAttr(image, element);
@@ -226,59 +254,42 @@ public class TicketParser {
         try {
             encodedImg = parseText(reader).getBytes(TICKET_XML_ENCODING);
         } catch (UnsupportedEncodingException e) {
-            throw new CustomTicketParserException("Problem with encoding");
+            throw new TicketParserException("Problem with encoding");
         }
 
         if (!Base64.isArrayByteBase64(encodedImg)) {
-            throw new CustomTicketParserException(
-                    "Value for the 'image' element is not in Base64 format");
+            throw new TicketParserException("Value for the 'image' element is not in Base64 format");
         }
 
         image.setData(Base64.decodeBase64(encodedImg));
 
-        targetTicket.getElemets().add(image);
+        targetTicket.getElements().add(image);
     }
 
-    private static void processBarcodeElement(XMLEventReader reader, StartElement element,
-            Ticket targetTicket) throws CustomTicketParserException, XMLStreamException {
+    private static void processBarcodeElement(XMLEventReader reader, StartElement element, Ticket targetTicket)
+            throws TicketParserException, XMLStreamException {
         Barcode barcode = new Barcode();
 
         processAbstractTicketAttr(barcode, element);
 
         barcode.setData(parseText(reader));
 
-        targetTicket.getElemets().add(barcode);
+        targetTicket.getElements().add(barcode);
     }
 
-    private static void processAbstractTicketAttr(AbstractTicketElement ticketAttr,
-            StartElement element) throws CustomTicketParserException {
+    private static void processAbstractTicketAttr(AbstractTicketElement ticketAttr, StartElement element)
+            throws TicketParserException {
         ticketAttr.setPosX(Integer.valueOf(element.getAttributeByName(QNAME_POSX).getValue()));
         ticketAttr.setPosY(Integer.valueOf(element.getAttributeByName(QNAME_POSY).getValue()));
         Attribute rotationAttr = element.getAttributeByName(QNAME_ROTATION);
         if (rotationAttr != null) {
-            Integer value = null;
-            try {
-                value = Integer.valueOf(rotationAttr.getValue());
-            } catch (NumberFormatException e) {
-                throw new CustomTicketParserException(
-                        "Incorrect value for the element's attribute 'rotation' found: "
-                                + rotationAttr.getValue());
-            }
-
-            if ((value.intValue() < 0) || (value.intValue() > 3)) {
-                throw new CustomTicketParserException(
-                        "Incorrect value for the element's attribute 'rotation' found: "
-                                + rotationAttr.getValue() + " . RULE: 0<= value <=3 ");
-            }
-
-            ticketAttr.setRotation(value);
+            ticketAttr.setRotation(Integer.valueOf(rotationAttr.getValue()));
         }
     }
 
-    private static String parseText(XMLEventReader reader) throws CustomTicketParserException,
-            XMLStreamException {
+    private static String parseText(XMLEventReader reader) throws XMLStreamException, TicketParserException {
         if (!reader.hasNext()) {
-            throw new CustomTicketParserException("No data event!");
+            throw new TicketParserException("No data event!");
         }
 
         XMLEvent event = reader.nextEvent();
@@ -287,7 +298,7 @@ public class TicketParser {
             return characters.getData();
         }
 
-        throw new CustomTicketParserException("Unexpected event!");
+        throw new TicketParserException("Unexpected event!");
     }
 
     private static String checkIfFontAvailable(String fontFamily) {
@@ -296,9 +307,59 @@ public class TicketParser {
         }
 
         if (PrinterApplet.isLogEnabled()) {
-            System.out.println("WARNING: can't find desired dont " + fontFamily
-                    + " in OS. Use default instead.");
+            System.out.println("WARNING: can't find desired dont " + fontFamily + " in OS. Use default instead.");
         }
         return Font.DIALOG;
+    }
+
+    private static void validateFormElement(Form form) throws IncorrectTicketDescriptionException {
+        boolean paperSizePresented = checkPaperSizePresentedInTicket(form);
+        boolean paperPaddingPresented = checkPaperPaddingPresentedInTicket(form);
+        float paperWidth = floatValue(form.getPaperWidth());
+        float paperHeight = floatValue(form.getPaperHeight());
+        float formWidth = floatValue(form.getWidth()) * UNIT_TO_MM;
+        float formHeight = floatValue(form.getHeight()) * UNIT_TO_MM;
+        if (paperSizePresented) {
+            if (paperWidth < formWidth) {
+                throw new IncorrectTicketDescriptionException("Ticket width is bigger than specified paper width");
+            }
+            if (paperHeight < formHeight) {
+                throw new IncorrectTicketDescriptionException("Ticket height is bigger than specified paper height");
+            }
+        } else if (paperPaddingPresented) {
+            throw new IncorrectTicketDescriptionException(
+                    "Values for both paper-width and paper-height should be specified to render paper padding");
+        }
+
+        if (paperSizePresented && paperPaddingPresented) {
+            float paddingTop = floatValue(form.getPaddingTop());
+            float paddingRight = floatValue(form.getPaddingRight());
+            float paddingLeft = floatValue(form.getPaddingLeft());
+            float paddingBottom = floatValue(form.getPaddingBottom());
+            float demandedImageablePaperWidth = paperWidth - paddingLeft - paddingRight;
+            float demandedImageablePaperHeight = paperHeight - paddingTop - paddingBottom;
+            if (demandedImageablePaperWidth < formWidth) {
+                throw new IncorrectTicketDescriptionException("Demanded paper width is less than specified form width");
+            }
+            if (demandedImageablePaperHeight < formHeight) {
+                throw new IncorrectTicketDescriptionException(
+                        "Demanded paper height is less than specified form height");
+            }
+        }
+    }
+
+    static boolean checkPaperSizePresentedInTicket(Form form) {
+        if ((form.getPaperWidth() != null) && (form.getPaperHeight() != null)) {
+            return true;
+        }
+        return false;
+    }
+
+    static boolean checkPaperPaddingPresentedInTicket(Form form) {
+        if ((form.getPaddingTop() != null) || (form.getPaddingRight() != null) || (form.getPaddingBottom() != null)
+                || (form.getPaddingLeft() != null)) {
+            return true;
+        }
+        return false;
     }
 }
