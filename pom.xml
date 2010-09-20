@@ -10,6 +10,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- <sh.app.ticket_printer_webpage.basedir>d:/my_tmp/projects/webpage</sh.app.ticket_printer_webpage.basedir>  -->
     <sh.app.ticket_printer_webpage.basedir>${basedir}/../webpage</sh.app.ticket_printer_webpage.basedir>
+    <sh.app.ticket_printer_webpage.ticket_descript>${basedir}/src/main/resources/dev/ticket1.xml</sh.app.ticket_printer_webpage.ticket_descript>
   </properties>
 
 
@@ -110,6 +111,7 @@
                     <delete>
                       <fileset dir="${sh.app.ticket_printer_webpage.basedir}/WebContent" includes="*.???"/>
                     </delete>
+                    <copy file="${sh.app.ticket_printer_webpage.ticket_descript}" todir="${sh.app.ticket_printer_webpage.basedir}/src/sh/app/ticket_printer_webpage" overwrite="true" />
                     <copy file="${basedir}/src/main/resources/prod_rest/sample.html" todir="${sh.app.ticket_printer_webpage.basedir}/src/sh/app/ticket_printer_webpage" overwrite="true" />
                     <copy file="${basedir}/src/main/resources/prod_rest/deployJava.js" todir="${sh.app.ticket_printer_webpage.basedir}/WebContent" overwrite="true" />
                     <copy file="${basedir}/src/main/resources/prod_rest/ticket-printer.jnlp" todir="${sh.app.ticket_printer_webpage.basedir}/WebContent" overwrite="true" />
