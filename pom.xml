@@ -6,14 +6,57 @@
   <version>1.0.1.0</version>
   <name>Ticket printer</name>
 
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- <sh.app.ticket_printer_webpage.basedir>d:/my_tmp/projects/webpage</sh.app.ticket_printer_webpage.basedir>  -->
     <sh.app.ticket_printer_webpage.basedir>${basedir}/../webpage</sh.app.ticket_printer_webpage.basedir>
     <sh.app.ticket_printer_webpage.ticket_descript>${basedir}/src/main/resources/dev/ticket1.xml</sh.app.ticket_printer_webpage.ticket_descript>
   </properties>
+  
+  
+  <dependencies>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.4</version>
+    </dependency>
+  </dependencies>
 
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
 
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+		    <id>generate-version-file</id>
+            <phase>process-resources</phase>
+            <configuration>
+			  <tasks>
+                <echo file="${project.build.outputDirectory}/META-INF/VERSION" encoding="UTF-8" message="${version}"/>
+			  </tasks>
+            </configuration>
+			<goals>
+			  <goal>run</goal>
+			</goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  
   <profiles>
     <profile>
       <id>dev</id>
@@ -154,44 +197,4 @@
     </profile>
   </profiles>
 
-
-  <dependencies>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
-    </dependency>
-  </dependencies>
-
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <echo file="${basedir}/src/main/resources/common/META-INF/VERSION" encoding="UTF-8" message="${version}"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>
