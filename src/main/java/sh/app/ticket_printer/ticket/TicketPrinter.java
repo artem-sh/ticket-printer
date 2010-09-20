@@ -18,7 +18,7 @@ import javax.print.attribute.Attribute;
 import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 
 import sh.app.ticket_printer.PrinterApplet;
-import sh.app.ticket_printer.exception.TicketPrinterException;
+import sh.app.ticket_printer.exception.IncorrectTicketDescriptionException;
 import sh.app.ticket_printer.ticket.model.Form;
 import sh.app.ticket_printer.ticket.model.Form.PaperOrientation;
 
@@ -61,7 +61,7 @@ public class TicketPrinter implements Printable {
         return isPrinterReady;
     }
 
-    public static void printTicket(Ticket ticket) throws PrinterException, TicketPrinterException {
+    public static void printTicket(Ticket ticket) throws PrinterException, IncorrectTicketDescriptionException {
         if (PrinterApplet.isLogEnabled()) {
             System.out.println("Entering TicketPrinter.printTicket()");
         }
@@ -116,7 +116,7 @@ public class TicketPrinter implements Printable {
         
         return Printable.PAGE_EXISTS;
     }
-    
+
     private static void preparePageFormatForPaperSize(Form form, PageFormat format) {
         Paper paper = new Paper();
         double paperWidth = form.getPaperWidth() * TRANSFORM_MM_TO_POINT;
@@ -126,54 +126,61 @@ public class TicketPrinter implements Printable {
         format.setPaper(paper);
     }
     
-    private static void preparePageFormatForPaperPadding(Form form, PageFormat format, PrinterJob printJob) throws TicketPrinterException {
+    private static void preparePageFormatForPaperPadding(Form form, PageFormat format, PrinterJob printJob)
+            throws IncorrectTicketDescriptionException {
         if (!checkPaperPaddingPresentedInTicket(form)) {
-                return;
+            return;
         }
-        
+
         Paper paper = format.getPaper();
         boolean pageFormatChanged = false;
-        
+
         double paddingX = paper.getImageableX();
         if (form.getPaddingLeft() != null) {
             float demandedPaddingX = form.getPaddingLeft() * TRANSFORM_MM_TO_POINT;
             if (demandedPaddingX < paddingX) {
-                throw new TicketPrinterException("Demanded paper left padding is less than physical minimum (set by printer) padding");
+                throw new IncorrectTicketDescriptionException(
+                        "Demanded paper left padding is less than physical minimum (set by printer) padding");
             }
             pageFormatChanged = true;
             paddingX = demandedPaddingX;
         }
-        
+
         double paddingY = paper.getImageableY();
         if (form.getPaddingTop() != null) {
             float demandedPaddingY = form.getPaddingTop() * TRANSFORM_MM_TO_POINT;
             if (demandedPaddingY < paddingY) {
-                throw new TicketPrinterException("Demanded paper top padding is less than physical minimum (set by printer) padding");
+                throw new IncorrectTicketDescriptionException(
+                        "Demanded paper top padding is less than physical minimum (set by printer) padding");
             }
             pageFormatChanged = true;
             paddingY = demandedPaddingY;
         }
-        
+
         double imageableWidth = paper.getImageableWidth() - (paddingX - paper.getImageableX());
         if (form.getPaddingRight() != null) {
-            double demandedWidth = (form.getPaperWidth() - form.getPaddingLeft() - form.getPaddingRight()) * TRANSFORM_MM_TO_POINT;
+            double demandedWidth = (form.getPaperWidth() - form.getPaddingLeft() - form.getPaddingRight())
+                    * TRANSFORM_MM_TO_POINT;
             if (demandedWidth > imageableWidth) {
-                throw new TicketPrinterException("Demanded page width is bigger than imageable (printable) page width");
+                throw new IncorrectTicketDescriptionException(
+                        "Demanded page width is bigger than imageable (printable) page width");
             }
             imageableWidth = demandedWidth;
             pageFormatChanged = true;
         }
-        
+
         double imageableHeight = paper.getImageableHeight() - (paddingY - paper.getImageableY());
         if (form.getPaddingBottom() != null) {
-            double demandedHeight = (form.getPaperHeight() - form.getPaddingTop() - form.getPaddingBottom()) * TRANSFORM_MM_TO_POINT;
+            double demandedHeight = (form.getPaperHeight() - form.getPaddingTop() - form.getPaddingBottom())
+                    * TRANSFORM_MM_TO_POINT;
             if (demandedHeight > imageableHeight) {
-                throw new TicketPrinterException("Demanded page height is bigger than imageable (printable) page height");
+                throw new IncorrectTicketDescriptionException(
+                        "Demanded page height is bigger than imageable (printable) page height");
             }
             imageableHeight = demandedHeight;
             pageFormatChanged = true;
         }
-        
+
         if (pageFormatChanged) {
             paper.setImageableArea(paddingX, paddingY, imageableWidth, imageableHeight);
             format.setPaper(paper);

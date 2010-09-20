@@ -4,6 +4,7 @@ import static sh.app.ticket_printer.AppletVersionManager.compareInternalToExtern
 
 import java.applet.Applet;
 import java.awt.Graphics;
+import java.awt.print.PrinterException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,15 +88,19 @@ public class PrinterApplet extends Applet {
 
             Ticket ticket = TicketParser.parse(ticketString);
             TicketPrinter.printTicket(ticket);
+        } catch (PrinterException e) {
+            System.err.println("Printer error occured while printing a ticket:");
+            return RESULT_PRINTER_IS_UNAVAILABLE;
         } catch (TicketParserException e) {
-            System.err.println("Syntax error revealed in ticket description.");
+            System.err.println("Syntax error revealed in ticket description:");
             printExceptionAndCause(e);
             return RESULT_INCORRECT_PARAMS;
         } catch (IncorrectTicketDescriptionException e) {
-            System.err.println("Logical error revealed in ticket description.");
+            System.err.println("Logical error revealed in ticket description:");
             printExceptionAndCause(e);
             return RESULT_INCORRECT_PARAMS;
         } catch (Throwable t) {
+            System.err.println("Unknown error occured while printing a ticket:");
             printExceptionAndCause(t);
             return RESULT_UNKNOWN_ERROR;
         } finally {
