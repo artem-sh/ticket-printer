@@ -15,9 +15,9 @@ import org.apache.commons.codec.binary.Base64;
 
 public class ImageToBase64EncoderTest {
 
-    public static void main(String[] args) {
+    public static void main(String ... args) {
         try {
-            FileInputStream fileinputstream = new FileInputStream("test.jpg");
+            FileInputStream fileinputstream = new FileInputStream("src/spike/sh/app/ticket_printer/ticket/test.jpg");
             int numberBytes = fileinputstream.available();
             byte contentArray[] = new byte[numberBytes];
             fileinputstream.read(contentArray);
