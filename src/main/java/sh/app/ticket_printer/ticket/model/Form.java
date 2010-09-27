@@ -14,7 +14,7 @@ public class Form implements TicketPart {
     private Float paperHeight;
     private int border;
     public enum PaperOrientation {PORTRAIT, LANDSCAPE};
-    private PaperOrientation paperOrientation;
+    private PaperOrientation paperOrientation = PaperOrientation.PORTRAIT;
     
     public Float getWidth() {
         return width;
