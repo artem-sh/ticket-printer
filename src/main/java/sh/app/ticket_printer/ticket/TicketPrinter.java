@@ -68,27 +68,18 @@ public class TicketPrinter implements Printable {
         
         PrinterJob printJob = PrinterJob.getPrinterJob();
         PageFormat format = printJob.defaultPage();
-        boolean pageFormatChanged = false;
+        
+        preparePageFormatForPaperOrientation(ticket.getForm(), format);
+        
         if (checkPaperSizePresentedInTicket(ticket.getForm())) {
             preparePageFormatForPaperSize(ticket.getForm(), format);
-            pageFormatChanged = true;
             
             format = printJob.validatePage(format);
             
             preparePageFormatForPaperPadding(ticket.getForm(), format, printJob);
         }
 
-        PaperOrientation paperOrientation = ticket.getForm().getPaperOrientation();
-        if (paperOrientation != null) {
-            format.setOrientation(getPageOrientationValue(paperOrientation));
-            pageFormatChanged = true;
-        }
-
-        if (pageFormatChanged) {
-            printJob.setPrintable(new TicketPrinter(ticket), format);
-        } else {
-            printJob.setPrintable(new TicketPrinter(ticket));
-        }
+        printJob.setPrintable(new TicketPrinter(ticket), format);
         printJob.print();
     }
     
@@ -110,11 +101,18 @@ public class TicketPrinter implements Printable {
          * translate by the X and Y values in the PageFormat to avoid clipping
          */
         Graphics2D g2d = (Graphics2D)graphics;
-        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+        g2d.translate(pageFormat.getPaper().getImageableX(), pageFormat.getPaper().getImageableY());
         
         TicketRender.render(currentTicket, g2d);
         
         return Printable.PAGE_EXISTS;
+    }
+    
+    private static void preparePageFormatForPaperOrientation(Form form, PageFormat format) {
+        PaperOrientation paperOrientation = form.getPaperOrientation();
+        if (paperOrientation != null) {
+            format.setOrientation(getPageOrientationValue(paperOrientation));
+        }
     }
 
     private static void preparePageFormatForPaperSize(Form form, PageFormat format) {
