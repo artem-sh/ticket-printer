@@ -19,6 +19,7 @@ import sh.app.ticket_printer.ticket.TicketPrinter;
 public class PrinterApplet extends Applet {
 
     private static final String DEBUG_APPLET_PARAM = "debug";
+    private static final String DEBUG_MODE_ENABLER = "debugIsOn";
     private static final String DEBUG_ENABLED_VALUE = "true";
     private static final String VERSION_APPLET_PARAM = "appletVersion";
     private static final int RESULT_SUCCESS = 0;
@@ -71,8 +72,7 @@ public class PrinterApplet extends Applet {
 
         InputStream is = null;
         try {
-        	// TODO: remove later STARTS!
-        	if (ticketString == null) {
+        	if (DEBUG_MODE_ENABLER.equals(ticketString)) {
         	    System.out.println("Print test ticket for debug purpose");
 	            String xmlFileName = "/ticket1.xml";
 	            is = PrinterApplet.class.getResourceAsStream(xmlFileName);
@@ -84,7 +84,6 @@ public class PrinterApplet extends Applet {
 	            }
 	            ticketString = sb.toString();
         	}
-        	// TODO: remove later ENDS!
 
             Ticket ticket = TicketParser.parse(ticketString);
             TicketPrinter.printTicket(ticket);
@@ -136,15 +135,12 @@ public class PrinterApplet extends Applet {
         }
     }
     
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // TODO: remove in production    
-    public static void setLogEnabled() {
+    private static void setLogEnabled() {
         logEnabled = true;
     }
     
-    // TODO: remove in production
     public static void main(String[] args) {
         setLogEnabled();
-        new PrinterApplet().sendDataToPrinter(null);
+        new PrinterApplet().sendDataToPrinter(DEBUG_MODE_ENABLER);
     }
 }

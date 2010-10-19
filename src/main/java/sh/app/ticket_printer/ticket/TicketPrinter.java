@@ -1,5 +1,6 @@
 package sh.app.ticket_printer.ticket;
 
+import static java.lang.Math.round;
 import static sh.app.ticket_printer.ticket.TicketParser.checkPaperPaddingPresentedInTicket;
 import static sh.app.ticket_printer.ticket.TicketParser.checkPaperSizePresentedInTicket;
 
@@ -75,8 +76,17 @@ public class TicketPrinter implements Printable {
             preparePageFormatForPaperSize(ticket.getForm(), format);
             
             format = printJob.validatePage(format);
+            if (PrinterApplet.isLogEnabled()) {
+                System.out.println("Page format after validating by current print job:");
+                printPageFormatInfo(format);
+            }
             
             preparePageFormatForPaperPadding(ticket.getForm(), format, printJob);
+        }
+        
+        if (PrinterApplet.isLogEnabled()) {
+            System.out.println("DEBUG: prepared page format is:");
+            printPageFormatInfo(format);
         }
 
         printJob.setPrintable(new TicketPrinter(ticket), format);
@@ -95,6 +105,11 @@ public class TicketPrinter implements Printable {
         
         if (pageIndex != 0) { /* We have only one page, and 'page' is zero-based */
             return NO_SUCH_PAGE;
+        }
+        
+        if (PrinterApplet.isLogEnabled()) {
+            System.out.println("DEBUG: real page format is: ");
+            printPageFormatInfo(pageFormat);
         }
         
         /* User (0,0) is typically outside the imageable area, so we must
@@ -122,6 +137,11 @@ public class TicketPrinter implements Printable {
         paper.setSize(paperWidth, paperHeight);
         paper.setImageableArea(0, 0, paperWidth, paperHeight);
         format.setPaper(paper);
+        
+        if (PrinterApplet.isLogEnabled()) {
+            System.out.println("Page format in the TicketPrinter.preparePageFormatForPaperSize():");
+            printPageFormatInfo(format);
+        }
     }
     
     private static void preparePageFormatForPaperPadding(Form form, PageFormat format, PrinterJob printJob)
@@ -240,5 +260,19 @@ public class TicketPrinter implements Printable {
         }
 
         return false;
+    }
+    
+    private static void printPageFormatInfo(PageFormat pageFormat) {
+        PageFormat pf = pageFormat; 
+        if (pageFormat.getOrientation() == PageFormat.LANDSCAPE) {
+            pf = (PageFormat) pageFormat.clone();
+            pf.setOrientation(PageFormat.PORTRAIT);
+        }
+        
+        System.out.println("Page format toString(), all data specified in mm, for portrait page orientation:");
+        System.out.println("page width: " + round(pf.getWidth() / TRANSFORM_MM_TO_POINT) +
+                           ", page height: " + round(pf.getHeight() / TRANSFORM_MM_TO_POINT) +
+                           ", imageable X: " + round(pf.getImageableX() / TRANSFORM_MM_TO_POINT) +
+                           ", imageable Y: " + round(pf.getImageableY() /TRANSFORM_MM_TO_POINT));
     }
 }
