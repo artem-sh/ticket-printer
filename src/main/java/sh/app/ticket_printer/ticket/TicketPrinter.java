@@ -156,10 +156,10 @@ public class TicketPrinter implements Printable {
         double paddingX = paper.getImageableX();
         if (form.getPaddingLeft() != null) {
             float demandedPaddingX = form.getPaddingLeft() * TRANSFORM_MM_TO_POINT;
-            if (demandedPaddingX < paddingX) {
-                throw new IncorrectTicketDescriptionException(
-                        "Demanded paper left padding is less than physical minimum (set by printer) padding");
-            }
+//            if (demandedPaddingX < paddingX) {
+//                throw new IncorrectTicketDescriptionException(
+//                        "Demanded paper left padding is less than physical minimum (set by printer) padding");
+//            }
             pageFormatChanged = true;
             paddingX = demandedPaddingX;
         }
@@ -167,10 +167,10 @@ public class TicketPrinter implements Printable {
         double paddingY = paper.getImageableY();
         if (form.getPaddingTop() != null) {
             float demandedPaddingY = form.getPaddingTop() * TRANSFORM_MM_TO_POINT;
-            if (demandedPaddingY < paddingY) {
-                throw new IncorrectTicketDescriptionException(
-                        "Demanded paper top padding is less than physical minimum (set by printer) padding");
-            }
+//            if (demandedPaddingY < paddingY) {
+//                throw new IncorrectTicketDescriptionException(
+//                        "Demanded paper top padding is less than physical minimum (set by printer) padding");
+//            }
             pageFormatChanged = true;
             paddingY = demandedPaddingY;
         }
@@ -179,10 +179,10 @@ public class TicketPrinter implements Printable {
         if (form.getPaddingRight() != null) {
             double demandedWidth = (form.getPaperWidth() - form.getPaddingLeft() - form.getPaddingRight())
                     * TRANSFORM_MM_TO_POINT;
-            if (demandedWidth > imageableWidth) {
-                throw new IncorrectTicketDescriptionException(
-                        "Demanded page width is bigger than imageable (printable) page width");
-            }
+//            if (demandedWidth > imageableWidth) {
+//                throw new IncorrectTicketDescriptionException(
+//                        "Demanded page width is bigger than imageable (printable) page width");
+//            }
             imageableWidth = demandedWidth;
             pageFormatChanged = true;
         }
@@ -191,10 +191,10 @@ public class TicketPrinter implements Printable {
         if (form.getPaddingBottom() != null) {
             double demandedHeight = (form.getPaperHeight() - form.getPaddingTop() - form.getPaddingBottom())
                     * TRANSFORM_MM_TO_POINT;
-            if (demandedHeight > imageableHeight) {
-                throw new IncorrectTicketDescriptionException(
-                        "Demanded page height is bigger than imageable (printable) page height");
-            }
+//            if (demandedHeight > imageableHeight) {
+//                throw new IncorrectTicketDescriptionException(
+//                        "Demanded page height is bigger than imageable (printable) page height");
+//            }
             imageableHeight = demandedHeight;
             pageFormatChanged = true;
         }
