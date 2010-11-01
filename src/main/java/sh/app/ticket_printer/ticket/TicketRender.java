@@ -89,8 +89,23 @@ public class TicketRender {
         }
 
         g.setFont(font);
-        g.drawString(text.getData(), text.getPosX() * transformToPxs,
-                text.getPosY() * transformToPxs + text.getFontSize());
+        
+        int dx, dy;
+        switch (text.getRotation().intValue()) {
+            case 0 : dx = 0; dy = 1;
+                break;
+            case 1 : dx = 1; dy = 0;
+                break;
+            case 2 : dx = 0; dy = 0;
+                break;
+            case 3 : dx = -1; dy = 0;
+                break;
+            default : dx = 0; dy = 0;
+                break;
+        }
+
+        g.drawString(text.getData(), text.getPosX() * transformToPxs + dx * text.getFontSize(),
+                text.getPosY() * transformToPxs + dy * text.getFontSize());
     }
 
 	private static void renderBarcode(Barcode barcode, Graphics2D g) {
