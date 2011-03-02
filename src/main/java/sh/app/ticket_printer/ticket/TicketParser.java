@@ -159,11 +159,14 @@ public class TicketParser {
         if (attr != null) {
             form.setBorder(Integer.valueOf(attr.getValue()));
         }
-        attr = element.getAttributeByName(QNAME_PAPER_WIDTH);
+        
+        // By design paper width in ticket description is measured vertically and paper height- horizontally.
+        // So we have to convert them to "normal" style:
+        attr = element.getAttributeByName(QNAME_PAPER_HEIGTH);
         if (attr != null) {
             form.setPaperWidth(Float.valueOf(attr.getValue()));
         }
-        attr = element.getAttributeByName(QNAME_PAPER_HEIGTH);
+        attr = element.getAttributeByName(QNAME_PAPER_WIDTH);
         if (attr != null) {
             form.setPaperHeight(Float.valueOf(attr.getValue()));
         }
