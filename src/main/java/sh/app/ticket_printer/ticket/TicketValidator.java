@@ -14,7 +14,7 @@ import sh.app.ticket_printer.ticket.model.Form;
 
 
 public class TicketValidator {
-    static final float UNIT_TO_MM = 0.1f;
+    public static final float UNIT_TO_MM = 0.1f;
     static final Set<String> fontFamilies;
     
     static {
@@ -24,12 +24,7 @@ public class TicketValidator {
     
 
     public static void validateFormElement(Form form) throws IncorrectTicketDescriptionException {
-        boolean paperSizePresented = checkPaperSizePresentedInTicket(form);
-        boolean paperPaddingPresented = checkPaperPaddingPresentedInTicket(form);
-        if (paperPaddingPresented && !paperSizePresented) {
-            throw new IncorrectTicketDescriptionException("Values for both paper-width and paper-height should be specified to render paper padding");
-        }
-        if (!paperSizePresented) {
+        if (!checkPaperSizePresentedInTicket(form)) {
             return;
         }
         
@@ -42,21 +37,6 @@ public class TicketValidator {
         }
         if (paperHeight < formHeight) {
             throw new IncorrectTicketDescriptionException("Ticket height is bigger than specified paper height");
-        }
-        
-        if (paperPaddingPresented) {
-            float paddingTop = asFloatSafely(form.getPaddingTop());
-            float paddingRight = asFloatSafely(form.getPaddingRight());
-            float paddingLeft = asFloatSafely(form.getPaddingLeft());
-            float paddingBottom = asFloatSafely(form.getPaddingBottom());
-            float demandedImageablePaperWidth = paperWidth - paddingLeft - paddingRight;
-            float demandedImageablePaperHeight = paperHeight - paddingTop - paddingBottom;
-            if (demandedImageablePaperWidth < formWidth) {
-                throw new IncorrectTicketDescriptionException("Form width is bigger then paper width available for printing");
-            }
-            if (demandedImageablePaperHeight < formHeight) {
-                throw new IncorrectTicketDescriptionException("Form height is bigger then paper height available for printing");
-            }
         }
     }
     

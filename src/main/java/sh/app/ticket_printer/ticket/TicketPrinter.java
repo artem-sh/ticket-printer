@@ -26,7 +26,7 @@ import sh.app.ticket_printer.ticket.model.Form;
 public class TicketPrinter implements Printable {
     
     public static final float MM_TO_POINT = 72f / 25.4f;
-    public static final float UNIT_TO_POINT = 0.1f * MM_TO_POINT;
+    public static final float UNIT_TO_POINT = TicketValidator.UNIT_TO_MM * MM_TO_POINT;
     private Ticket currentTicket;
 
     private TicketPrinter(Ticket currentTicket) {

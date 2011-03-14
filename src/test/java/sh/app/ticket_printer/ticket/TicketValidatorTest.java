@@ -65,20 +65,6 @@ public class TicketValidatorTest {
     }
     
     @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_paddingLeftPresented_paperWidthIsNull() throws Exception {
-        formPO.setPaddingLeft(5f);
-        formPO.setPaperWidth(null);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_paddingBottomPresented_paperHeightIsNull() throws Exception {
-        formPO.setPaddingBottom(5f);
-        formPO.setPaperHeight(null);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
     public void validateFormElement_portraitOrientation_formWidthBiggerPaperWidth() throws Exception {
         formPO.setWidth(convertMmToUnit(211f));
         validateFormElement(formPO);
@@ -102,82 +88,6 @@ public class TicketValidatorTest {
         validateFormElement(formLO);
     }
     
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInVertical_causeBottom() throws Exception {
-        formPO.setPaddingBottom(100f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInVertical_causeBottom() throws Exception {
-        formLO.setPaddingBottom(100f);
-        validateFormElement(formLO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInVertical_causeTop() throws Exception {
-        formPO.setPaddingTop(100f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInVertical_causeTop() throws Exception {
-        formLO.setPaddingTop(100f);
-        validateFormElement(formLO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInVertical_causeBoth() throws Exception {
-        formPO.setPaddingBottom(50f);
-        formPO.setPaddingTop(50f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInVertical_causeBoth() throws Exception {
-        formLO.setPaddingBottom(50f);
-        formLO.setPaddingTop(50f);
-        validateFormElement(formLO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInHorizontal_causeLeft() throws Exception {
-        formPO.setPaddingLeft(150f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInHorizontal_causeLeft() throws Exception {
-        formLO.setPaddingLeft(250f);
-        validateFormElement(formLO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInHorizontal_causeRight() throws Exception {
-        formPO.setPaddingRight(150f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInHorizontal_causeRight() throws Exception {
-        formLO.setPaddingRight(250f);
-        validateFormElement(formLO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_portraitOrientation_notEnoughSpaceInHorizontal_causeBoth() throws Exception {
-        formPO.setPaddingLeft(75f);
-        formPO.setPaddingRight(75f);
-        validateFormElement(formPO);
-    }
-    
-    @Test(expected=IncorrectTicketDescriptionException.class)
-    public void validateFormElement_landscapeOrientation_notEnoughSpaceInHorizontal_causeBoth() throws Exception {
-        formLO.setPaddingLeft(125f);
-        formLO.setPaddingRight(125f);
-        validateFormElement(formLO);
-    }
-
     private static float convertMmToUnit(float sizeInUnits) {
         return sizeInUnits / TicketValidator.UNIT_TO_MM;
     }
