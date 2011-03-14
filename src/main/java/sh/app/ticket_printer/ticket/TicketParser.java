@@ -1,16 +1,11 @@
 package sh.app.ticket_printer.ticket;
 
 import static sh.app.ticket_printer.PrinterApplet.isLogEnabled;
-import static sh.app.ticket_printer.util.PrimitiveTypeExctractor.floatValue;
+import static sh.app.ticket_printer.util.PrimitiveTypeExctractor.*;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -28,7 +23,6 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 
-import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.exception.IncorrectTicketDescriptionException;
 import sh.app.ticket_printer.exception.TicketParserException;
 import sh.app.ticket_printer.ticket.model.AbstractTicketElement;
@@ -40,7 +34,6 @@ import sh.app.ticket_printer.ticket.model.Text;
 
 public class TicketParser {
 
-    private static final float UNIT_TO_MM = 0.1f;
     private static final String TICKET_XML_ENCODING = "UTF-8";
     private static final String TICKET_XSD_FILE_NAME = "/META-INF/ticket.xsd";
     private static final String TEXT_STYLE_BOLD = "B";
@@ -69,14 +62,7 @@ public class TicketParser {
     private static final QName QNAME_FONT_NAME = QName.valueOf("font");
     private static final QName QNAME_FONT_SIZE = QName.valueOf("size");
     private static final QName QNAME_TEXT_STYLE = QName.valueOf("style");
-
-    private static final Set<String> fontFamilies;
-    private static Validator validator;
-
-    static {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        fontFamilies = new HashSet<String>(Arrays.asList(ge.getAvailableFontFamilyNames()));
-    }
+    private static Validator xmlValidator;
 
     public static Ticket parse(String xml) throws TicketParserException, IncorrectTicketDescriptionException {
         if (isLogEnabled()) {
@@ -90,7 +76,7 @@ public class TicketParser {
             throw new TicketParserException("Problem with encoding");
         }
 
-        validate(xmlBytes);
+        validateXml(xmlBytes);
 
         Ticket ticket = new Ticket();
 
@@ -124,16 +110,16 @@ public class TicketParser {
         return ticket;
     }
 
-    private static synchronized void validate(byte[] xmlBytes) throws TicketParserException {
+    private static synchronized void validateXml(byte[] xmlBytes) throws TicketParserException {
         try {
-            if (validator == null) {
+            if (xmlValidator == null) {
                 SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
                 Schema schema = schemaFactory.newSchema(new StreamSource(TicketParser.class
                         .getResourceAsStream(TICKET_XSD_FILE_NAME)));
-                validator = schema.newValidator();
+                xmlValidator = schema.newValidator();
             }
 
-            validator.validate(new StreamSource(new ByteArrayInputStream(xmlBytes)));
+            xmlValidator.validate(new StreamSource(new ByteArrayInputStream(xmlBytes)));
         } catch (Exception e) {
             throw new TicketParserException("Incorrect ticket description format", e);
         }
@@ -157,7 +143,7 @@ public class TicketParser {
         }
         attr = element.getAttributeByName(QNAME_BORDER);
         if (attr != null) {
-            form.setBorder(Integer.valueOf(attr.getValue()));
+            form.setBorder(asInt(attr.getValue()));
         }
         
         // By design paper width in ticket description is measured vertically and paper height- horizontally.
@@ -171,7 +157,7 @@ public class TicketParser {
             form.setPaperHeight(Float.valueOf(attr.getValue()));
         }
 
-        validateFormElement(form);
+        TicketValidator.validateFormElement(form);
         targetTicket.setForm(form);
     }
 
@@ -211,7 +197,7 @@ public class TicketParser {
 
         Attribute attr = element.getAttributeByName(QNAME_FONT_NAME);
         if (attr != null) {
-            text.setFontName(checkIfFontAvailable(attr.getValue()));
+            text.setFontName(TicketValidator.checkIfFontAvailable(attr.getValue()));
         }
         attr = element.getAttributeByName(QNAME_FONT_SIZE);
         if (attr != null) {
@@ -302,67 +288,5 @@ public class TicketParser {
         }
 
         throw new TicketParserException("Unexpected event!");
-    }
-
-    private static String checkIfFontAvailable(String fontFamily) {
-        if (fontFamilies.contains(fontFamily)) {
-            return fontFamily;
-        }
-
-        if (PrinterApplet.isLogEnabled()) {
-            System.out.println("WARNING: can't find desired dont " + fontFamily + " in OS. Use default instead.");
-        }
-        return Font.DIALOG;
-    }
-
-    private static void validateFormElement(Form form) throws IncorrectTicketDescriptionException {
-        boolean paperSizePresented = checkPaperSizePresentedInTicket(form);
-        boolean paperPaddingPresented = checkPaperPaddingPresentedInTicket(form);
-        float paperWidth = floatValue(form.getPaperWidth());
-        float paperHeight = floatValue(form.getPaperHeight());
-        float formWidth = floatValue(form.getWidth()) * UNIT_TO_MM;
-        float formHeight = floatValue(form.getHeight()) * UNIT_TO_MM;
-        if (paperSizePresented) {
-            if (paperWidth < formWidth) {
-                throw new IncorrectTicketDescriptionException("Ticket width is bigger than specified paper width");
-            }
-            if (paperHeight < formHeight) {
-                throw new IncorrectTicketDescriptionException("Ticket height is bigger than specified paper height");
-            }
-        } else if (paperPaddingPresented) {
-            throw new IncorrectTicketDescriptionException(
-                    "Values for both paper-width and paper-height should be specified to render paper padding");
-        }
-
-        if (paperSizePresented && paperPaddingPresented) {
-            float paddingTop = floatValue(form.getPaddingTop());
-            float paddingRight = floatValue(form.getPaddingRight());
-            float paddingLeft = floatValue(form.getPaddingLeft());
-            float paddingBottom = floatValue(form.getPaddingBottom());
-            float demandedImageablePaperWidth = paperWidth - paddingLeft - paddingRight;
-            float demandedImageablePaperHeight = paperHeight - paddingTop - paddingBottom;
-            if (demandedImageablePaperWidth < formWidth) {
-                throw new IncorrectTicketDescriptionException("Demanded paper width is less than specified form width");
-            }
-            if (demandedImageablePaperHeight < formHeight) {
-                throw new IncorrectTicketDescriptionException(
-                        "Demanded paper height is less than specified form height");
-            }
-        }
-    }
-
-    static boolean checkPaperSizePresentedInTicket(Form form) {
-        if ((form.getPaperWidth() != null) && (form.getPaperHeight() != null)) {
-            return true;
-        }
-        return false;
-    }
-
-    static boolean checkPaperPaddingPresentedInTicket(Form form) {
-        if ((form.getPaddingTop() != null) || (form.getPaddingRight() != null) || (form.getPaddingBottom() != null)
-                || (form.getPaddingLeft() != null)) {
-            return true;
-        }
-        return false;
     }
 }

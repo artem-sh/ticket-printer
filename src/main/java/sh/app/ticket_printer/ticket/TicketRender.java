@@ -26,8 +26,7 @@ import sh.app.ticket_printer.ticket.model.Text;
 import sh.app.ticket_printer.ticket.model.TicketPart;
 
 public class TicketRender {
-
-	private static final float transformToPxs = 28f / 100f;
+    public static final float UNIT_TO_PX = 28f / 100f;
 
 	public static void render(Ticket ticket, Graphics2D g) {
 		if (PrinterApplet.isLogEnabled()) {
@@ -62,7 +61,11 @@ public class TicketRender {
 
     private static void renderForm(Form form, Graphics2D g) {
 		if (form.hasBorder()) {
-			g.draw(new Rectangle2D.Double(0, 0, form.getWidth() * transformToPxs, form.getHeight() * transformToPxs));
+			g.draw(new Rectangle2D.Double(
+			        0,
+			        0,
+			        form.getWidth().floatValue() * UNIT_TO_PX,
+			        form.getHeight().floatValue() * UNIT_TO_PX));
 		}
 	}
 
@@ -75,7 +78,7 @@ public class TicketRender {
             textStyle |= Font.ITALIC;
         }
 
-        Font font = new Font(text.getFontName(), textStyle, text.getFontSize());
+        Font font = new Font(text.getFontName(), textStyle, text.getFontSize().intValue());
 
         if (text.isUnderline()) {
             Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>();
@@ -104,8 +107,10 @@ public class TicketRender {
                 break;
         }
 
-        g.drawString(text.getData(), text.getPosX() * transformToPxs + dx * text.getFontSize(),
-                text.getPosY() * transformToPxs + dy * text.getFontSize());
+        g.drawString(
+                text.getData(),
+                Math.round(text.getPosX().intValue() * UNIT_TO_PX + dx * text.getFontSize().intValue()),
+                Math.round(text.getPosY().intValue() * UNIT_TO_PX + dy * text.getFontSize().intValue()));
     }
 
 	private static void renderBarcode(Barcode barcode, Graphics2D g) {
@@ -114,8 +119,8 @@ public class TicketRender {
 	private static void renderImage(Image image, Graphics2D g) {
 	    try {
 	        BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getData()));
-	        double x = image.getPosX().intValue() * transformToPxs;
-	        double y = image.getPosY().intValue() * transformToPxs;
+	        double x = image.getPosX().intValue() * UNIT_TO_PX;
+	        double y = image.getPosY().intValue() * UNIT_TO_PX;
 	        double angle = -Math.toRadians(90 * image.getRotation().intValue());
 	        
 	        AffineTransform transform = new AffineTransform();

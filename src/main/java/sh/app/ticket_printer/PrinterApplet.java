@@ -129,10 +129,6 @@ public class PrinterApplet extends Applet {
     
     private static void printExceptionAndCause(Throwable t) {
         t.printStackTrace();
-        if (t.getCause() != null) {
-            System.err.println("Cause is: ");
-            t.getCause().printStackTrace();
-        }
     }
     
     private static void setLogEnabled() {

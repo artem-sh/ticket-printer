@@ -1,8 +1,10 @@
 package sh.app.ticket_printer.ticket;
 
+import static java.awt.print.PageFormat.LANDSCAPE;
+import static java.awt.print.PageFormat.PORTRAIT;
+import static java.awt.print.PageFormat.REVERSE_LANDSCAPE;
 import static java.lang.Math.round;
-import static sh.app.ticket_printer.ticket.TicketParser.checkPaperPaddingPresentedInTicket;
-import static sh.app.ticket_printer.ticket.TicketParser.checkPaperSizePresentedInTicket;
+import static sh.app.ticket_printer.util.PrimitiveTypeExctractor.asFloatSafely;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,7 +13,6 @@ import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.security.InvalidParameterException;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -21,11 +22,11 @@ import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 import sh.app.ticket_printer.PrinterApplet;
 import sh.app.ticket_printer.exception.IncorrectTicketDescriptionException;
 import sh.app.ticket_printer.ticket.model.Form;
-import sh.app.ticket_printer.ticket.model.Form.PaperOrientation;
 
 public class TicketPrinter implements Printable {
     
-    public static final float TRANSFORM_MM_TO_POINT = 72f / 25.4f;
+    public static final float MM_TO_POINT = 72f / 25.4f;
+    public static final float UNIT_TO_POINT = 0.1f * MM_TO_POINT;
     private Ticket currentTicket;
 
     private TicketPrinter(Ticket currentTicket) {
@@ -70,25 +71,20 @@ public class TicketPrinter implements Printable {
         PrinterJob printJob = PrinterJob.getPrinterJob();
         PageFormat format = printJob.defaultPage();
         
-        preparePageFormatForPaperOrientation(ticket.getForm(), format);
+        preparePageFormat(ticket.getForm(), format);
+        if (PrinterApplet.isLogEnabled()) {
+            System.out.println("DEBUG: prepared page format is:");
+            printPageFormatInfo(format);
+        }
         
-        if (checkPaperSizePresentedInTicket(ticket.getForm())) {
-            preparePageFormatForPaperSize(ticket.getForm(), format);
-            
+        if (TicketValidator.checkPaperSizePresentedInTicket(ticket.getForm())) {
             format = printJob.validatePage(format);
             if (PrinterApplet.isLogEnabled()) {
                 System.out.println("Page format after validating by current print job:");
                 printPageFormatInfo(format);
             }
-            
-            preparePageFormatForPaperPadding(ticket.getForm(), format, printJob);
         }
         
-        if (PrinterApplet.isLogEnabled()) {
-            System.out.println("DEBUG: prepared page format is:");
-            printPageFormatInfo(format);
-        }
-
         printJob.setPrintable(new TicketPrinter(ticket), format);
         printJob.print();
     }
@@ -116,109 +112,46 @@ public class TicketPrinter implements Printable {
          * translate by the X and Y values in the PageFormat to avoid clipping
          */
         Graphics2D g2d = (Graphics2D)graphics;
-        g2d.translate(pageFormat.getPaper().getImageableX(), pageFormat.getPaper().getImageableY());
+        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
         
         TicketRender.render(currentTicket, g2d);
         
         return Printable.PAGE_EXISTS;
     }
     
-    private static void preparePageFormatForPaperOrientation(Form form, PageFormat format) {
-        PaperOrientation paperOrientation = form.getPaperOrientation();
-        if (paperOrientation != null) {
-            format.setOrientation(getPageOrientationValue(paperOrientation));
-        }
-    }
+    private static void preparePageFormat(Form form, PageFormat defaultFormat) {
+        Paper paper = defaultFormat.getPaper();
+        double paperWidth, paperHeight;
+        float paddingLeft = asFloatSafely(form.getPaddingLeft()) * MM_TO_POINT;
+        float paddingTop = asFloatSafely(form.getPaddingTop()) * MM_TO_POINT;
 
-    private static void preparePageFormatForPaperSize(Form form, PageFormat format) {
-        Paper paper = new Paper();
-        double paperWidth = form.getPaperWidth() * TRANSFORM_MM_TO_POINT;
-        double paperHeight = form.getPaperHeight() * TRANSFORM_MM_TO_POINT;
-        paper.setSize(paperWidth, paperHeight);
-        paper.setImageableArea(0, 0, paperWidth, paperHeight);
-        format.setPaper(paper);
-        
-        if (PrinterApplet.isLogEnabled()) {
-            System.out.println("Page format in the TicketPrinter.preparePageFormatForPaperSize():");
-            printPageFormatInfo(format);
-        }
-    }
-    
-    private static void preparePageFormatForPaperPadding(Form form, PageFormat format, PrinterJob printJob)
-            throws IncorrectTicketDescriptionException {
-        if (!checkPaperPaddingPresentedInTicket(form)) {
-            return;
-        }
-
-        Paper paper = format.getPaper();
-        boolean pageFormatChanged = false;
-
-        double paddingX = paper.getImageableX();
-        if (form.getPaddingLeft() != null) {
-            float demandedPaddingX = form.getPaddingLeft() * TRANSFORM_MM_TO_POINT;
-//            if (demandedPaddingX < paddingX) {
-//                throw new IncorrectTicketDescriptionException(
-//                        "Demanded paper left padding is less than physical minimum (set by printer) padding");
-//            }
-            pageFormatChanged = true;
-            paddingX = demandedPaddingX;
-        }
-
-        double paddingY = paper.getImageableY();
-        if (form.getPaddingTop() != null) {
-            float demandedPaddingY = form.getPaddingTop() * TRANSFORM_MM_TO_POINT;
-//            if (demandedPaddingY < paddingY) {
-//                throw new IncorrectTicketDescriptionException(
-//                        "Demanded paper top padding is less than physical minimum (set by printer) padding");
-//            }
-            pageFormatChanged = true;
-            paddingY = demandedPaddingY;
-        }
-
-        double imageableWidth = paper.getImageableWidth() - (paddingX - paper.getImageableX());
-        if (form.getPaddingRight() != null) {
-            double demandedWidth = (form.getPaperWidth() - form.getPaddingLeft() - form.getPaddingRight())
-                    * TRANSFORM_MM_TO_POINT;
-//            if (demandedWidth > imageableWidth) {
-//                throw new IncorrectTicketDescriptionException(
-//                        "Demanded page width is bigger than imageable (printable) page width");
-//            }
-            imageableWidth = demandedWidth;
-            pageFormatChanged = true;
-        }
-
-        double imageableHeight = paper.getImageableHeight() - (paddingY - paper.getImageableY());
-        if (form.getPaddingBottom() != null) {
-            double demandedHeight = (form.getPaperHeight() - form.getPaddingTop() - form.getPaddingBottom())
-                    * TRANSFORM_MM_TO_POINT;
-//            if (demandedHeight > imageableHeight) {
-//                throw new IncorrectTicketDescriptionException(
-//                        "Demanded page height is bigger than imageable (printable) page height");
-//            }
-            imageableHeight = demandedHeight;
-            pageFormatChanged = true;
-        }
-
-        if (pageFormatChanged) {
-            paper.setImageableArea(paddingX, paddingY, imageableWidth, imageableHeight);
-            format.setPaper(paper);
-        }
-    }
-    
-    private static int getPageOrientationValue(Form.PaperOrientation orientation) {
-        int orientationValue;
-        switch (orientation) {
+        switch (form.getPaperOrientation()) {
         case LANDSCAPE:
-            orientationValue = PageFormat.LANDSCAPE;
+            paperWidth = (form.getPaperWidth() != null) ? form.getPaperWidth().floatValue() * MM_TO_POINT : paper.getHeight();
+            paperHeight = (form.getPaperHeight() != null) ? form.getPaperHeight().floatValue() * MM_TO_POINT : paper.getWidth();
+            defaultFormat.setOrientation(PageFormat.LANDSCAPE);
+            paper.setSize(paperHeight, paperWidth);
+            paper.setImageableArea(
+                    paddingTop,
+                    0,
+                    form.getHeight().floatValue() * UNIT_TO_POINT,
+                    paperWidth - paddingLeft);
             break;
         case PORTRAIT:
-            orientationValue = PageFormat.PORTRAIT;
-            break;
         default:
-            throw new InvalidParameterException("Incorrect paper orientation parameter has been specified");
+            paperWidth = (form.getPaperWidth() != null) ? form.getPaperWidth().floatValue() * MM_TO_POINT : paper.getWidth();
+            paperHeight = (form.getPaperHeight() != null) ? form.getPaperHeight().floatValue() * MM_TO_POINT : paper.getHeight();
+            defaultFormat.setOrientation(PageFormat.PORTRAIT);
+            paper.setSize(paperWidth, paperHeight);
+            paper.setImageableArea(
+                    paddingLeft,
+                    paddingTop,
+                    form.getWidth().floatValue() * UNIT_TO_POINT,
+                    form.getHeight().floatValue() * UNIT_TO_POINT);
+            break;
         }
-        
-        return orientationValue;
+
+        defaultFormat.setPaper(paper);
     }
 
     private static boolean checkPrintersAvailable() {
@@ -264,15 +197,30 @@ public class TicketPrinter implements Printable {
     
     private static void printPageFormatInfo(PageFormat pageFormat) {
         PageFormat pf = pageFormat; 
-        if (pageFormat.getOrientation() == PageFormat.LANDSCAPE) {
-            pf = (PageFormat) pageFormat.clone();
-            pf.setOrientation(PageFormat.PORTRAIT);
+        
+        String orientationStr;
+        switch (pageFormat.getOrientation()) {
+        case LANDSCAPE:
+            orientationStr = "LANDSCAPE";
+            break;
+        case PORTRAIT:
+            orientationStr = "PORTRAIT";
+            break;
+        case REVERSE_LANDSCAPE:
+            orientationStr = "REVERSE_LANDSCAPE";
+            break;
+        default:
+            orientationStr = "UNKNOWN!";
+            break;
         }
         
-        System.out.println("Page format toString(), all data specified in mm, for portrait page orientation:");
-        System.out.println("page width: " + round(pf.getWidth() / TRANSFORM_MM_TO_POINT) +
-                           ", page height: " + round(pf.getHeight() / TRANSFORM_MM_TO_POINT) +
-                           ", imageable X: " + round(pf.getImageableX() / TRANSFORM_MM_TO_POINT) +
-                           ", imageable Y: " + round(pf.getImageableY() /TRANSFORM_MM_TO_POINT));
+        System.out.println("Page format toString(), all data specified in mm, for " + orientationStr + " page orientation. " +
+        		"Below 'width' is measured horizontally, 'height' - vertically.");
+        System.out.println("page width: " + round(pf.getWidth() / MM_TO_POINT) +
+                           ", page height: " + round(pf.getHeight() / MM_TO_POINT) +
+                           ", imageable X: " + round(pf.getImageableX() / MM_TO_POINT) +
+                           ", imageable Y: " + round(pf.getImageableY() / MM_TO_POINT) +
+                           ", imageable width: " + round(pf.getImageableWidth() / MM_TO_POINT) +
+                           ", imageable height: " + round(pf.getImageableHeight() / MM_TO_POINT));
     }
 }
