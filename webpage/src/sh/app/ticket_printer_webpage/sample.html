@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Ticket printer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+    <h1>Ticket printer applet Demo</h1>
+
+    <script src="deployJava.js"></script>
+    <script language="JavaScript">
+        var attributes = { id:'ticketApplet', code:'sh.app.ticket_printer.PrinterApplet.class', archive:'ticket-printer__V1.0.2.0.jar, commons-codec-1.4.jar', width:1, height:1 } ; 
+        var parameters = {jnlp_href:'ticket-printer.jnlp', appletVersion:'1.0.2.0', debug:'true'};
+        deployJava.runApplet(attributes, parameters, '1.6'); 
+    </script>
+    
+    <script language="JavaScript">
+        function printTestTicket() {
+			var ticketString = CHANGE_ME;
+			try {
+				var result = ticketApplet.sendDataToPrinter(ticketString);
+				if (result != 0) {
+					alert('Ticket can not be printed, see logs in Java console for details');
+				}
+			} catch (e) {
+				alert(e);
+			}
+        }
+    </script>
+    
+    <script language="JavaScript">
+        function checkPrinterReady() {
+			try {
+				var result = ticketApplet.getPrinterStatus();
+				if (result == 0) {
+					alert('Printer is not ready');
+				} else if (result == 1) {
+					alert('Printer is ready');
+				} else {
+					alert('Got unexpected answer');
+				}
+			} catch (e) {
+				alert(e);
+			}
+        }
+    </script>
+    
+    <a href="javascript:checkPrinterReady();">Check if printer is ready</a>
+    <br/><br/>
+    <a href="javascript:printTestTicket();">Print test ticket</a>
+	</body>
+</html>
